@@ -2,9 +2,7 @@
 
 namespace blink_math {
 
-int add_numbers(int a, int b) {
-  return a + b;
-}
+int add_numbers(int a, int b) { return a + b; }
 
 int clamp_interval(int interval_ms, int min_ms, int max_ms) {
   if (interval_ms < min_ms) {
@@ -16,9 +14,7 @@ int clamp_interval(int interval_ms, int min_ms, int max_ms) {
   return interval_ms;
 }
 
-uint8_t next_led_state(uint8_t current_state) {
-  return (current_state == 0) ? 1 : 0;
-}
+uint8_t next_led_state(uint8_t current_state) { return (current_state == 0) ? 1 : 0; }
 
 int calculate_cycle_ms(int on_ms, int off_ms) {
   int safe_on = clamp_interval(on_ms, 50, 10000);

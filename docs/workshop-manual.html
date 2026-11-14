@@ -262,8 +262,8 @@
 
     <div style="margin-top: 22px; background: rgba(15,23,42,0.55); padding: 12px 16px; border-radius: 10px; font-size: 9pt;">
       <strong>สิ่งที่ต้องเตรียมในเครื่อง (Prerequisites):</strong>
-      Git (2.40+) • VS Code + PlatformIO IDE • Python 3.10+ (`pip install pre-commit`) • GitHub CLI (`gh`) •
-      <em>สำหรับ Windows ที่ต้องการรัน `pio test -e native` ในเครื่อง:</em> ติดตั้ง MinGW/WinLibs (`gcc`/`g++`) ใน PATH
+      Git (2.40+) • VS Code + PlatformIO IDE • <code>uv</code> (<code>uv tool install pre-commit</code>) • GitHub CLI (<code>gh</code>) •
+      <em>สำหรับ Windows ที่ต้องการรัน <code>pio test -e native</code> ในเครื่อง:</em> ติดตั้ง MinGW/WinLibs (<code>gcc</code>/<code>g++</code>) ใน PATH
     </div>
   </div>
 
@@ -478,8 +478,8 @@ gh pr merge --rebase --delete-branch</pre>
 
     <div class="steps">
       <div class="step-box">
-        <span class="step-num">1</span><span class="step-title">ติดตั้ง Pre-commit Hooks</span>
-        <pre class="cmd">pip install pre-commit
+        <span class="step-num">1</span><span class="step-title">ติดตั้ง Pre-commit Hooks (ด้วย uv)</span>
+        <pre class="cmd">uv tool install pre-commit
 pre-commit install
 pre-commit install --hook-type commit-msg</pre>
       </div>
@@ -618,8 +618,9 @@ jobs: รายการงาน (เช่น lint, unit-test, build-esp32)
   runs-on: ubuntu-latest   # เครื่องเสมือน (Runner)
   needs: lint              # รอให้ job ก่อนหน้าผ่านก่อน
   steps:
-    - uses: actions/checkout@v4  # เรียก Action สำเร็จรูป
+    - uses: actions/checkout@v7  # เรียก Action สำเร็จรูป
       with: ...                  # ส่งพารามิเตอร์ให้ Action
+    - uses: astral-sh/setup-uv@v10.3.3 # ตั้งค่า uv แทน pip/python
     - run: pio test -e native    # รันคำสั่ง Shell เอง
       if: startsWith(...)        # เงื่อนไขในการรัน</pre>
       </div>
@@ -628,10 +629,10 @@ jobs: รายการงาน (เช่น lint, unit-test, build-esp32)
         <pre class="cmd">1. GitHub Marketplace:
    github.com/marketplace?type=actions
 2. Official Actions (เชื่อถือได้สูงสุด):
-   github.com/actions (checkout, setup-python, cache)
+   github.com/actions, astral-sh/setup-uv
 3. วิธีดูวิธีใช้: เปิดดู README.md หรือ action.yml
    ของ Repo นั้นเพื่อดู inputs (with:) และเวอร์ชันล่าสุด
-   * แนะนำระบุเลขเวอร์ชันเสมอ เช่น @v4 แทน @main</pre>
+   * แนะนำระบุเลขเวอร์ชันล่าสุด เช่น @v7, @v10.3.3</pre>
       </div>
     </div>
 
@@ -708,7 +709,7 @@ gh pr merge --rebase --delete-branch</pre>
         <pre class="cmd">git checkout main && git pull origin main
 git tag -a v1.0.0 -m "release: v1.0.0"
 git push origin v1.0.0
-python exercises/verify.py --all</pre>
+uv run exercises/verify.py --all</pre>
       </div>
     </div>
   </div>

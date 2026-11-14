@@ -18,23 +18,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           python-version: '3.12'
+          enable-cache: true
 
       - name: Cache PlatformIO
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio
+          path: ~/.platformio
           key: ${{ runner.os }}-pio-esp32-${{ hashFiles('workshop/platformio.ini') }}
 
-      - name: Install PlatformIO & esptool
-        run: pip install --upgrade platformio esptool
+      - name: Install PlatformIO & esptool with uv
+        run: |
+          uv tool install platformio
+          uv tool install esptool
 
       - name: Run Native Unit Tests before Release
         run: pio test -e native
@@ -50,17 +51,17 @@ jobs:
           cp "${BUILD_DIR}/firmware.bin" "dist/esp32doit-${GITHUB_REF_NAME}-firmware.bin"
 
           # Merge bootloader, partitions, and firmware into a single flashable binary (at 0x0)
-          esptool.py --chip esp32 merge_bin \
+          esptool --chip esp32 merge-bin \
             -o "dist/esp32doit-${GITHUB_REF_NAME}-merged-firmware.bin" \
-            --flash_mode dio \
-            --flash_freq 40m \
-            --flash_size 4MB \
+            --flash-mode dio \
+            --flash-freq 40m \
+            --flash-size 4MB \
             0x1000 "${BUILD_DIR}/bootloader.bin" \
             0x8000 "${BUILD_DIR}/partitions.bin" \
             0x10000 "${BUILD_DIR}/firmware.bin"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           files: |

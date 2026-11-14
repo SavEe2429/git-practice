@@ -6,16 +6,16 @@
 
 ---
 
-## วิธีเตรียมเครื่องและใช้งาน `verify.py`
+## วิธีเตรียมเครื่องและใช้งาน `verify.py` (ใช้ `uv`)
 ```bash
 # 0. เช็กความพร้อมเครื่องก่อนเริ่ม (แนะนำทำล่วงหน้า)
-python exercises/check_env.py
+uv run exercises/check_env.py
 
 # 1. ตรวจเฉพาะ Module 1
-python exercises/verify.py --module 1
+uv run exercises/verify.py --module 1
 
 # 2. ตรวจทั้งหมด 1-6
-python exercises/verify.py --all
+uv run exercises/verify.py --all
 ```
 > หมายเหตุ: ตามโครงสร้าง **Option A** โฟลเดอร์ `.github/` และ `.pre-commit-config.yaml` จะวางไว้ที่ **Root ของ Repo** ส่วนโค้ด PlatformIO อยู่ใน `workshop/` (จึงต้องมี `defaults: run: working-directory: workshop` ในไฟล์ `.yml`)
 

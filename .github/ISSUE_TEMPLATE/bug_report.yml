@@ -1,0 +1,48 @@
+name: Bug Report (แจ้งบั๊ก Firmware)
+description: รายงานปัญหาที่พบในโปรเจกต์ ESP32 DOIT DevKit v1
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        กรุณากรอกข้อมูลให้ครบถ้วนเพื่อให้ทีมจำลองปัญหาและแก้ไขได้เร็วขึ้นครับ
+
+  - type: input
+    id: version
+    attributes:
+      label: เวอร์ชันเฟิร์มแวร์ / Tag หรือ Commit
+      description: ระบุ Tag (เช่น v1.0.0) หรือเลข Commit ที่พบปัญหา
+      placeholder: v1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: สภาพแวดล้อมที่พบปัญหา
+      options:
+        - DOIT ESP32 DevKit v1 (Hardware จริง)
+        - PlatformIO Native Test ([env:native])
+        - GitHub Actions CI
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: อาการที่พบ & ขั้นตอนการทำซ้ำ (Steps to Reproduce)
+      placeholder: |
+        1. รันคำสั่ง...
+        2. ผลลัพธ์ที่เกิดขึ้น...
+        3. ผลลัพธ์ที่คาดหวัง...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ยืนยันเบื้องต้น
+      options:
+        - label: ทดสอบบน branch develop หรือ release ล่าสุดแล้ว
+          required: true

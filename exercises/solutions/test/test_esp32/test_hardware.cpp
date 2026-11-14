@@ -6,13 +6,9 @@
 #define LED_BUILTIN 2
 #endif
 
-void setUp(void) {
-  pinMode(LED_BUILTIN, OUTPUT);
-}
+void setUp(void) { pinMode(LED_BUILTIN, OUTPUT); }
 
-void tearDown(void) {
-  digitalWrite(LED_BUILTIN, LOW);
-}
+void tearDown(void) { digitalWrite(LED_BUILTIN, LOW); }
 
 void test_led_pin_toggle_hardware(void) {
   uint8_t state = blink_math::next_led_state(LOW);

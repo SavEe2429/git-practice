@@ -1,0 +1,94 @@
+name: CI - Lint, Test & Build
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: workshop
+
+jobs:
+  lint:
+    name: Code Format & Lint Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.12'
+          enable-cache: true
+
+      - name: Run pre-commit checks
+        uses: pre-commit/action@v3.0.1
+
+  unit-test:
+    name: Native Unit Tests (Unity)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.12'
+          enable-cache: true
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v6
+        with:
+          path: ~/.platformio/.cache
+          key: ${{ runner.os }}-pio-native-${{ hashFiles('workshop/platformio.ini') }}
+
+      - name: Install PlatformIO with uv
+        run: uv tool install platformio
+
+      - name: Run Native Unit Tests
+        run: pio test -e native -v
+
+  build-esp32:
+    name: Build Firmware (esp32doit-devkit-v1)
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.12'
+          enable-cache: true
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v6
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-pio-esp32-${{ hashFiles('workshop/platformio.ini') }}
+
+      - name: Install PlatformIO with uv
+        run: uv tool install platformio
+
+      - name: Build ESP32 Firmware
+        run: pio run -e esp32doit-devkit-v1
+
+      - name: Upload Release Candidate Artifact
+        if: startsWith(github.ref, 'refs/heads/release/')
+        uses: actions/upload-artifact@v7
+        with:
+          name: rc-firmware-${{ github.sha }}
+          path: |
+            workshop/.pio/build/esp32doit-devkit-v1/firmware.bin
+            workshop/.pio/build/esp32doit-devkit-v1/bootloader.bin
+            workshop/.pio/build/esp32doit-devkit-v1/partitions.bin
+          retention-days: 7
