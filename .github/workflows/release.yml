@@ -24,6 +24,7 @@ jobs:
         uses: astral-sh/setup-uv@v10.3.3
         with:
           python-version: '3.12'
+          enable-cache: false
 
       - name: Cache PlatformIO
         uses: actions/cache@v6
