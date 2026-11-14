@@ -213,6 +213,32 @@
       margin-top: 10px;
     }
     .check-box strong { color: #166534; }
+    .shot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .shot-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px;
+      background: #f8fafc;
+      text-align: center;
+    }
+    .shot-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+      border: 1px solid #e2e8f0;
+      display: block;
+    }
+    .shot-caption {
+      font-size: 8pt;
+      color: #475569;
+      margin-top: 4px;
+      font-weight: 600;
+    }
     svg { max-width: 100%; height: auto; }
   </style>
 </head>
@@ -337,8 +363,19 @@ git fetch origin && git rebase origin/main</pre>
       </div>
     </div>
 
+    <div class="shot-grid">
+      <div class="shot-card">
+        <img src="images/gh-01-repo-fork.png" alt="GitHub Repo Fork" />
+        <div class="shot-caption">ภาพจริง: หน้า Repo หลักบน GitHub พร้อมปุ่ม Fork และโครงสร้างไฟล์</div>
+      </div>
+      <div class="shot-card">
+        <img src="images/term-01-git-log.png" alt="git log linear" />
+        <div class="shot-caption">ภาพจริง: ผลลัพธ์ git log --graph --oneline ที่เป็นเส้นตรง</div>
+      </div>
+    </div>
+
     <div class="check-box">
-      <strong>✅ ตรวจผ่านด้วย:</strong> <code>python exercises/verify.py --module 1</code> (เช็ก Git repo, branch main/develop, และ Conventional Commits)
+      <strong>✅ ตรวจผ่านด้วย:</strong> <code>uv run exercises/verify.py --module 1</code> (เช็ก Git repo, branch main เส้นตรง, และ Conventional Commits)
     </div>
   </div>
 
@@ -409,6 +446,17 @@ git push -u origin feature/fast-blink</pre>
         <pre class="cmd">gh pr create --base main --fill
 # หลัง Review + CI ผ่าน (คงเส้นตรง 100%):
 gh pr merge --rebase --delete-branch</pre>
+      </div>
+    </div>
+
+    <div class="shot-grid">
+      <div class="shot-card">
+        <img src="images/gh-02-issue-templates.png" alt="Issue Templates YAML" />
+        <div class="shot-caption">ภาพจริง: ไฟล์ .github/ISSUE_TEMPLATE/*.yml บน GitHub</div>
+      </div>
+      <div class="shot-card">
+        <img src="images/gh-03-pulls.png" alt="Pull Requests" />
+        <div class="shot-caption">ภาพจริง: หน้า Pull Requests สำหรับเปิด PR และ Rebase Merge</div>
       </div>
     </div>
 
@@ -488,6 +536,11 @@ pre-commit install --hook-type commit-msg</pre>
         <pre class="cmd">pre-commit run --all-files</pre>
       </div>
     </div>
+
+    <div class="shot-card" style="margin-top: 8px;">
+      <img src="images/term-02-pre-commit.png" alt="pre-commit output" />
+      <div class="shot-caption">ภาพจริง: ผลรัน pre-commit run --all-files ผ่านทุก Hook</div>
+    </div>
   </div>
 
   <!-- MODULE 4 -->
@@ -550,6 +603,11 @@ pre-commit install --hook-type commit-msg</pre>
         <span class="step-num">2</span><span class="step-title">รัน Hardware Test เมื่อต่อบอร์ด ESP32</span>
         <pre class="cmd">pio test -e esp32doit-devkit-v1</pre>
       </div>
+    </div>
+
+    <div class="shot-card" style="margin-top: 8px;">
+      <img src="images/term-03-pio-build.png" alt="PlatformIO build output" />
+      <div class="shot-caption">ภาพจริง: ผล Build Firmware สำหรับ esp32doit-devkit-v1 ([SUCCESS])</div>
     </div>
   </div>
 
@@ -636,8 +694,19 @@ jobs: รายการงาน (เช่น lint, unit-test, build-esp32)
       </div>
     </div>
 
+    <div class="shot-grid">
+      <div class="shot-card">
+        <img src="images/gh-04-actions-list.png" alt="GitHub Actions List" />
+        <div class="shot-caption">ภาพจริง: รายการ Workflow Runs ในแท็บ Actions</div>
+      </div>
+      <div class="shot-card">
+        <img src="images/gh-05-actions-graph.png" alt="GitHub Actions 3-Job Graph" />
+        <div class="shot-caption">ภาพจริง: กราฟ CI 3 Jobs สีเขียว (Lint → Unit Test → Build ESP32)</div>
+      </div>
+    </div>
+
     <div class="check-box">
-      <strong>✅ ตรวจผ่านด้วย:</strong> เปิดแท็บ <strong>Actions</strong> บน GitHub ต้องเห็นเครื่องหมายถูกสีเขียวครบ 3 Jobs หรือรัน <code>python exercises/verify.py --module 5</code>
+      <strong>✅ ตรวจผ่านด้วย:</strong> เปิดแท็บ <strong>Actions</strong> บน GitHub ต้องเห็นเครื่องหมายถูกสีเขียวครบ 3 Jobs หรือรัน <code>uv run exercises/verify.py --module 5</code>
     </div>
   </div>
 
@@ -710,6 +779,16 @@ gh pr merge --rebase --delete-branch</pre>
 git tag -a v1.0.0 -m "release: v1.0.0"
 git push origin v1.0.0
 uv run exercises/verify.py --all</pre>
+      </div>
+    </div>
+    <div class="shot-grid">
+      <div class="shot-card">
+        <img src="images/gh-05-releases.png" alt="GitHub Releases" />
+        <div class="shot-caption">ภาพจริง: หน้า Releases สำหรับดาวน์โหลด firmware.bin และ merged-firmware.bin</div>
+      </div>
+      <div class="shot-card">
+        <img src="images/term-04-verify.png" alt="verify.py output" />
+        <div class="shot-caption">ภาพจริง: ผลรัน uv run exercises/verify.py --all</div>
       </div>
     </div>
   </div>
