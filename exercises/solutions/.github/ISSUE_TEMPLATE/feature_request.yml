@@ -1,0 +1,31 @@
+name: Feature Request (ขอฟีเจอร์ใหม่)
+description: เสนอฟีเจอร์ใหม่หรือการปรับปรุงสำหรับโปรเจกต์ ESP32
+title: "[Feat]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: ปัญหาหรือความต้องการ (Why)
+      description: อธิบายว่าทำไมถึงต้องมีฟีเจอร์นี้
+      placeholder: เช่น ต้องการปรับความถี่ไฟกระพริบตามค่า Input เพื่อแสดงสถานะการเชื่อมต่อ
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: แนวทางที่เสนอ (How)
+      description: ระบุฟังก์ชันหรือไฟล์ที่คาดว่าจะเพิ่ม/แก้ไข (เช่น lib/blink_math)
+      placeholder: เพิ่มฟังก์ชันใน lib/blink_math/ และเขียน Unit Test รองรับ
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target_branch
+    attributes:
+      label: Branch เป้าหมาย (Linear History + Rebase)
+      options:
+        - main (PR + Rebase and merge)
+        - release/v* (เฉพาะแก้บั๊กก่อนปล่อยเวอร์ชัน)
+      default: 0

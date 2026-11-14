@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ESP32 Git, Pre-commit, Testing & CI/CD Workshop Manual</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 14mm 16mm 14mm;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Leelawadee UI", "Tahoma", "Segoe UI", sans-serif;
+      color: #1e293b;
+      line-height: 1.55;
+      margin: 0;
+      padding: 0;
+      font-size: 10.5pt;
+      background: #ffffff;
+    }
+    .cover {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0284c7 100%);
+      color: #ffffff;
+      padding: 36px 32px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      page-break-after: always;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 9pt;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+    .cover h1 {
+      font-size: 24pt;
+      margin: 0 0 10px 0;
+      line-height: 1.25;
+    }
+    .cover p.subtitle {
+      font-size: 12pt;
+      color: #e0f2fe;
+      margin: 0 0 24px 0;
+    }
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .roadmap-card {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .roadmap-card .num {
+      font-size: 8.5pt;
+      color: #7dd3fc;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .roadmap-card .title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      margin: 2px 0;
+    }
+    .roadmap-card .desc {
+      font-size: 8.5pt;
+      color: #e2e8f0;
+    }
+    .module {
+      page-break-before: always;
+      padding-top: 4px;
+    }
+    .module:first-of-type {
+      page-break-before: auto;
+    }
+    .module-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #0284c7;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+    .module-tag {
+      background: #0284c7;
+      color: #fff;
+      font-weight: 700;
+      font-size: 9pt;
+      padding: 3px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .module-header h2 {
+      margin: 0;
+      font-size: 16pt;
+      color: #0f172a;
+    }
+    .video-pill {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 8.5pt;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .diagram-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 12px 0;
+      text-align: center;
+    }
+    .diagram-caption {
+      font-size: 8.5pt;
+      color: #475569;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+    .triad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .triad-card {
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .triad-why { background: #eff6ff; border-color: #93c5fd; }
+    .triad-how { background: #f0fdf4; border-color: #86efac; }
+    .triad-ben { background: #fefce8; border-color: #fde047; }
+    .triad-card h4 {
+      margin: 0 0 6px 0;
+      font-size: 10pt;
+      color: #0f172a;
+    }
+    .triad-card p, .triad-card ul {
+      margin: 0;
+      font-size: 9pt;
+      padding-left: 16px;
+    }
+    .triad-card p { padding-left: 0; }
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .step-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #ffffff;
+    }
+    .step-num {
+      display: inline-block;
+      background: #0f172a;
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      border-radius: 50%;
+      font-size: 8.5pt;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .step-title {
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: #0f172a;
+    }
+    pre.cmd {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 8.5pt;
+      margin: 6px 0 0 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .note-box {
+      background: #fff7ed;
+      border-left: 4px solid #f97316;
+      padding: 8px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 9pt;
+      margin: 10px 0;
+    }
+    .check-box {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 9pt;
+      margin-top: 10px;
+    }
+    .check-box strong { color: #166534; }
+    svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-badge">WORKSHOP MANUAL • DOIT ESP32 DEVKIT V1 (PlatformIO)</div>
+    <h1>คู่มือปฏิบัติการ Linear Git (Rebase), Pull Request,<br/>Pre-commit, Unit Test &amp; GitHub Actions CI/CD</h1>
+    <p class="subtitle">
+      คู่มือภาพนำทาง (Visual-First Guide) สำหรับพัฒนา Firmware ESP32 อย่างเป็นระบบ<br/>
+      ครบทั้ง <strong>ทำยังไง (How)</strong> • <strong>ทำไมต้องทำ (Why)</strong> • <strong>ทำแล้วดียังไง (Benefits)</strong>
+    </p>
+
+    <div class="roadmap-grid">
+      <div class="roadmap-card">
+        <div class="num">Module 1</div>
+        <div class="title">Linear Git &amp; Rebase</div>
+        <div class="desc">main เส้นตรงด้วย Rebase + Conventional Commits</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="num">Module 2</div>
+        <div class="title">Pull Request &amp; Review</div>
+        <div class="desc">PR Template, Code Review &amp; Branch Protection</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="num">Module 3</div>
+        <div class="title">Pre-commit Hooks</div>
+        <div class="desc">ตรวจฟอร์แมต &amp; Commit Message ก่อนเข้า History</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="num">Module 4</div>
+        <div class="title">PlatformIO Unit Test</div>
+        <div class="desc">รัน Unity Test บน Native (เร็ว) + โครงสร้าง ESP32</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="num">Module 5</div>
+        <div class="title">GitHub Actions CI</div>
+        <div class="desc">Lint + Test + Build ESP32 อัตโนมัติทุก PR</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="num">Module 6</div>
+        <div class="title">Auto Release (CD)</div>
+        <div class="desc">Tag v*.*.* → สร้าง firmware.bin &amp; merged-firmware.bin</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 22px; background: rgba(15,23,42,0.55); padding: 12px 16px; border-radius: 10px; font-size: 9pt;">
+      <strong>สิ่งที่ต้องเตรียมในเครื่อง (Prerequisites):</strong>
+      Git (2.40+) • VS Code + PlatformIO IDE • Python 3.10+ (`pip install pre-commit`) • GitHub CLI (`gh`) •
+      <em>สำหรับ Windows ที่ต้องการรัน `pio test -e native` ในเครื่อง:</em> ติดตั้ง MinGW/WinLibs (`gcc`/`g++`) ใน PATH
+    </div>
+  </div>
+
+  <!-- MODULE 1 -->
+  <div class="module">
+    <div class="module-header">
+      <div>
+        <span class="module-tag">MODULE 1</span>
+        <h2>Linear History (Rebase) &amp; Conventional Commits</h2>
+      </div>
+      <div class="video-pill">🎬 วิดีโอ: videos/01-gitflow-branching.mp4</div>
+    </div>
+
+    <div class="diagram-box">
+      <svg viewBox="0 0 760 175" xmlns="http://www.w3.org/2000/svg">
+        <!-- Linear main line -->
+        <line x1="60" y1="60" x2="720" y2="60" stroke="#0f172a" stroke-width="4.5"/>
+        <!-- Short-lived feature branch squashed/rebased back to linear -->
+        <path d="M 150 60 Q 170 115 200 115 L 300 115 Q 330 115 350 60" fill="none" stroke="#16a34a" stroke-width="3" stroke-dasharray="4,3"/>
+        <!-- Release branch out -->
+        <path d="M 450 60 Q 470 120 500 120 L 630 120 Q 660 120 680 60" fill="none" stroke="#f59e0b" stroke-width="3.5"/>
+
+        <!-- Labels -->
+        <rect x="8" y="47" width="52" height="24" rx="5" fill="#0f172a"/><text x="34" y="63" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">main</text>
+        <rect x="195" y="102" width="110" height="24" rx="5" fill="#16a34a"/><text x="250" y="118" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">feature/* (Squash)</text>
+        <rect x="515" y="108" width="105" height="24" rx="5" fill="#f59e0b"/><text x="567" y="124" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">release/v1.0.0</text>
+
+        <!-- Commit Dots (Linear) -->
+        <circle cx="95" cy="60" r="7" fill="#0f172a" stroke="#fff" stroke-width="2"/>
+        <circle cx="150" cy="60" r="7" fill="#0f172a" stroke="#fff" stroke-width="2"/>
+        <circle cx="350" cy="60" r="7" fill="#16a34a" stroke="#fff" stroke-width="2"/>
+        <text x="350" y="42" fill="#166534" font-size="9.5" font-weight="bold" text-anchor="middle">Squash/Rebase (เส้นตรง)</text>
+        <circle cx="450" cy="60" r="7" fill="#0f172a" stroke="#fff" stroke-width="2"/>
+        <circle cx="530" cy="120" r="6" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+        <circle cx="610" cy="120" r="6" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+        <circle cx="680" cy="60" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+        <text x="680" y="40" fill="#b45309" font-size="10" font-weight="bold" text-anchor="middle">Tag v1.0.0</text>
+      </svg>
+      <div class="diagram-caption">Linear History: main เดินเป็นเส้นตรง (Squash/Rebase PR) และแยก Branch ออกเฉพาะตอนทำ release/v*</div>
+    </div>
+
+    <div class="triad">
+      <div class="triad-card triad-why">
+        <h4>❓ ทำไมต้องทำ (Why)</h4>
+        <p>หากทุกคน Commit ตรงเข้า <code>main</code> โค้ดที่ยังเขียนไม่เสร็จจะปนกับโค้ดที่ปล่อยลงบอร์ดจริง และย้อนหาจุดพังยาก</p>
+      </div>
+      <div class="triad-card triad-how">
+        <h4>🛠️ ทำยังไง (How)</h4>
+        <p>ใช้ <code>main</code> เป็นเส้นตรงเส้นเดียว แตก <code>feature/*</code> สั้นๆ แล้ว Rebase เข้า <code>main</code> พร้อมตั้งชื่อ Commit แบบ <code>feat:</code>, <code>fix:</code></p>
+      </div>
+      <div class="triad-card triad-ben">
+        <h4>✨ ทำแล้วดียังไง (Benefits)</h4>
+        <p><code>main</code> สะอาดพร้อม Flash เสมอ, อ่านประวัติย้อนหลังรู้เรื่องทันที และสร้าง Release Notes อัตโนมัติได้</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-box">
+        <span class="step-num">1</span><span class="step-title">Fork Repo หลัก → Clone ลงเครื่อง (รองรับ 20+ คนไม่ชนกัน)</span>
+        <pre class="cmd"># กดปุ่ม Fork บน GitHub ไปยัง Account ของตัวเองก่อน
+git clone https://github.com/&lt;your-user&gt;/esp32-workshop.git
+cd esp32-workshop</pre>
+      </div>
+      <div class="step-box">
+        <span class="step-num">2</span><span class="step-title">แตก feature/* จาก main และฝึก Rebase</span>
+        <pre class="cmd">git checkout -b feature/fast-blink main
+# แก้ไข lib/blink_math หรือ src/main.cpp
+git add -A
+git commit -m "feat(blink): add fast blink preset"
+git fetch origin && git rebase origin/main</pre>
+      </div>
+    </div>
+
+    <div class="check-box">
+      <strong>✅ ตรวจผ่านด้วย:</strong> <code>python exercises/verify.py --module 1</code> (เช็ก Git repo, branch main/develop, และ Conventional Commits)
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module">
+    <div class="module-header">
+      <div>
+        <span class="module-tag">MODULE 2</span>
+        <h2>Pull Request (PR), Code Review &amp; Branch Protection</h2>
+      </div>
+      <div class="video-pill">🎬 วิดีโอ: videos/02-pull-request-review.mp4</div>
+    </div>
+
+    <div class="diagram-box">
+      <svg viewBox="0 0 760 135" xmlns="http://www.w3.org/2000/svg">
+        <rect x="15" y="42" width="130" height="48" rx="8" fill="#16a34a"/>
+        <text x="80" y="64" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">feature/fast-blink</text>
+        <text x="80" y="80" fill="#dcfce7" font-size="9.5" text-anchor="middle">Push ขึ้น GitHub</text>
+
+        <line x1="145" y1="66" x2="185" y2="66" stroke="#64748b" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+        <rect x="190" y="30" width="160" height="72" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+        <text x="270" y="52" fill="#1e40af" font-size="11" font-weight="bold" text-anchor="middle">Open Pull Request</text>
+        <text x="270" y="68" fill="#334155" font-size="9.5" text-anchor="middle">PR Template Checklist</text>
+        <text x="270" y="84" fill="#334155" font-size="9.5" text-anchor="middle">อธิบาย What &amp; Why</text>
+
+        <line x1="350" y1="66" x2="390" y2="66" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="395" y="30" width="165" height="72" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+        <text x="477" y="52" fill="#854d0e" font-size="11" font-weight="bold" text-anchor="middle">Quality Gates</text>
+        <text x="477" y="68" fill="#334155" font-size="9.5" text-anchor="middle">1. Peer Code Review</text>
+        <text x="477" y="84" fill="#334155" font-size="9.5" text-anchor="middle">2. CI Status Checks (เขียว)</text>
+
+        <line x1="560" y1="66" x2="600" y2="66" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="605" y="42" width="135" height="48" rx="8" fill="#0284c7"/>
+        <text x="672" y="64" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Rebase → main</text>
+        <text x="672" y="80" fill="#e0f2fe" font-size="9.5" text-anchor="middle">(Linear History)</text>
+      </svg>
+      <div class="diagram-caption">วงจร Pull Request: Push → เปิด PR พร้อม Template → รอ Review + CI เขียว → Merge เข้า Branch ปลายทาง</div>
+    </div>
+
+    <div class="triad">
+      <div class="triad-card triad-why">
+        <h4>❓ ทำไมต้องทำ (Why)</h4>
+        <p>เขียนโค้ดคนเดียวมักมองข้ามบั๊กหรือ Edge Cases และการ Push ทับ <code>main</code> โดยตรงเสี่ยงทำระบบทั้งทีมพัง</p>
+      </div>
+      <div class="triad-card triad-how">
+        <h4>🛠️ ทำยังไง (How)</h4>
+        <p>สร้าง <code>.github/pull_request_template.md</code>, เปิด PR ผ่าน GitHub/<code>gh</code>, และตั้ง Branch Protection ห้าม Push ตรงเข้า <code>main</code></p>
+      </div>
+      <div class="triad-card triad-ben">
+        <h4>✨ ทำแล้วดียังไง (Benefits)</h4>
+        <p>มีเพื่อนช่วยตรวจโค้ดก่อน Merge, แชร์ความรู้ในทีม, และบันทึกเหตุผลการแก้โค้ดไว้ตรวจสอบย้อนหลังได้</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-box">
+        <span class="step-num">1</span><span class="step-title">สร้าง Issue Forms (.yml) &amp; PR Template</span>
+        <pre class="cmd">mkdir -p .github/ISSUE_TEMPLATE
+# วาง bug_report.yml, feature_request.yml, config.yml
+# วาง .github/pull_request_template.md
+git push -u origin feature/fast-blink</pre>
+      </div>
+      <div class="step-box">
+        <span class="step-num">2</span><span class="step-title">เปิด PR เข้า main ด้วย gh CLI และ Rebase Merge</span>
+        <pre class="cmd">gh pr create --base main --fill
+# หลัง Review + CI ผ่าน (คงเส้นตรง 100%):
+gh pr merge --rebase --delete-branch</pre>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>📝 โครงสร้าง Issue Forms (<code>.github/ISSUE_TEMPLATE/*.yml</code>):</strong> ใช้คีย์ <code>name</code>, <code>description</code>, <code>labels</code> และ <code>body:</code> (รองรับ <code>type: input</code>, <code>dropdown</code>, <code>textarea</code>, <code>checkboxes</code>) ทำให้ผู้แจ้งบั๊กกรอกข้อมูลครบตั้งแต่ต้น และตั้ง <code>blank_issues_enabled: false</code> ใน <code>config.yml</code> เพื่อบังคับใช้ฟอร์มเสมอ<br/>
+      <strong>🔒 การตั้ง Branch Protection บน GitHub (Linear History):</strong> ไปที่ <em>Settings → Branches → Add branch protection rule</em> ใส่ชื่อ <code>main</code> แล้วติ๊ก <strong>Require a pull request before merging</strong>, <strong>Require status checks to pass</strong> และ <strong>Require linear history</strong> (บังคับ Squash/Rebase ให้ประวัติเป็นเส้นตรงเสมอ)
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module">
+    <div class="module-header">
+      <div>
+        <span class="module-tag">MODULE 3</span>
+        <h2>Pre-commit Hooks (ด่านตรวจอัตโนมัติก่อน Commit)</h2>
+      </div>
+      <div class="video-pill">🎬 วิดีโอ: videos/03-pre-commit-hooks.mp4</div>
+    </div>
+
+    <div class="diagram-box">
+      <svg viewBox="0 0 760 130" xmlns="http://www.w3.org/2000/svg">
+        <rect x="15" y="40" width="115" height="48" rx="8" fill="#0f172a"/>
+        <text x="72" y="68" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">git commit</text>
+
+        <line x1="130" y1="64" x2="165" y2="64" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="170" y="25" width="145" height="78" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+        <text x="242" y="48" fill="#991b1b" font-size="10.5" font-weight="bold" text-anchor="middle">1. File Checks</text>
+        <text x="242" y="65" fill="#334155" font-size="9" text-anchor="middle">trailing-whitespace</text>
+        <text x="242" y="80" fill="#334155" font-size="9" text-anchor="middle">end-of-file / yaml</text>
+
+        <line x1="315" y1="64" x2="345" y2="64" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="350" y="25" width="135" height="78" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+        <text x="417" y="48" fill="#1e40af" font-size="10.5" font-weight="bold" text-anchor="middle">2. clang-format</text>
+        <text x="417" y="66" fill="#334155" font-size="9" text-anchor="middle">จัดย่อหน้า C/C++</text>
+        <text x="417" y="81" fill="#334155" font-size="9" text-anchor="middle">ให้ตรงมาตรฐานทีม</text>
+
+        <line x1="485" y1="64" x2="515" y2="64" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="520" y="25" width="140" height="78" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+        <text x="590" y="48" fill="#854d0e" font-size="10.5" font-weight="bold" text-anchor="middle">3. commit-msg</text>
+        <text x="590" y="66" fill="#334155" font-size="9" text-anchor="middle">เช็ก feat:/fix:/ci:</text>
+        <text x="590" y="81" fill="#334155" font-size="9" text-anchor="middle">บล็อกถ้าพิมพ์ผิด</text>
+
+        <line x1="660" y1="64" x2="685" y2="64" stroke="#16a34a" stroke-width="2.5"/>
+        <circle cx="715" cy="64" r="24" fill="#16a34a"/>
+        <text x="715" y="68" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">PASS</text>
+      </svg>
+      <div class="diagram-caption">Pre-commit Pipeline: ตรวจอัตโนมัติในเครื่องทุกครั้งที่สั่ง git commit</div>
+    </div>
+
+    <div class="triad">
+      <div class="triad-card triad-why">
+        <h4>❓ ทำไมต้องทำ (Why)</h4>
+        <p>รอให้ CI บน GitHub แจ้งเตือนว่าลืมจัดฟอร์แมตหรือเขียน Commit ผิด เสียเวลารอ Build และทำให้ PR รก</p>
+      </div>
+      <div class="triad-card triad-how">
+        <h4>🛠️ ทำยังไง (How)</h4>
+        <p>วางไฟล์ <code>.pre-commit-config.yaml</code> + <code>.clang-format</code> แล้วรัน <code>pre-commit install</code></p>
+      </div>
+      <div class="triad-card triad-ben">
+        <h4>✨ ทำแล้วดียังไง (Benefits)</h4>
+        <p>โค้ดทั้งทีมหน้าตาเหมือนกัน 100%, ลด Conflict จากการจัดย่อหน้า, และจับปัญหาได้ใน 1 วินาทีก่อน Push</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-box">
+        <span class="step-num">1</span><span class="step-title">ติดตั้ง Pre-commit Hooks</span>
+        <pre class="cmd">pip install pre-commit
+pre-commit install
+pre-commit install --hook-type commit-msg</pre>
+      </div>
+      <div class="step-box">
+        <span class="step-num">2</span><span class="step-title">ทดสอบรันกับทุกไฟล์ในโปรเจกต์</span>
+        <pre class="cmd">pre-commit run --all-files</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module">
+    <div class="module-header">
+      <div>
+        <span class="module-tag">MODULE 4</span>
+        <h2>Unit Testing บน PlatformIO (Native + ESP32 Structure)</h2>
+      </div>
+      <div class="video-pill">🎬 วิดีโอ: videos/04-platformio-unit-testing.mp4</div>
+    </div>
+
+    <div class="diagram-box">
+      <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="35" width="190" height="72" rx="8" fill="#0f172a"/>
+        <text x="115" y="58" fill="#7dd3fc" font-size="11" font-weight="bold" text-anchor="middle">lib/blink_math/</text>
+        <text x="115" y="76" fill="#fff" font-size="9.5" text-anchor="middle">Pure C++ Logic</text>
+        <text x="115" y="92" fill="#94a3b8" font-size="8.5" text-anchor="middle">(ไม่ผูกกับ Arduino.h)</text>
+
+        <line x1="210" y1="55" x2="290" y2="35" stroke="#16a34a" stroke-width="2.5"/>
+        <line x1="210" y1="88" x2="290" y2="105" stroke="#0284c7" stroke-width="2.5"/>
+
+        <rect x="295" y="10" width="225" height="54" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="407" y="32" fill="#166534" font-size="10.5" font-weight="bold" text-anchor="middle">[env:native] — test_native</text>
+        <text x="407" y="50" fill="#334155" font-size="9" text-anchor="middle">รันบน PC / GitHub CI (เร็วมาก ~2 วิ)</text>
+
+        <rect x="295" y="78" width="225" height="54" rx="8" fill="#eff6ff" stroke="#0284c7" stroke-width="2"/>
+        <text x="407" y="100" fill="#1e40af" font-size="10.5" font-weight="bold" text-anchor="middle">[env:esp32doit-devkit-v1]</text>
+        <text x="407" y="118" fill="#334155" font-size="9" text-anchor="middle">test_esp32 + src/main.cpp (บอร์ดจริง)</text>
+
+        <line x1="520" y1="37" x2="575" y2="37" stroke="#16a34a" stroke-width="2.5"/>
+        <rect x="580" y="15" width="155" height="44" rx="8" fill="#16a34a"/>
+        <text x="657" y="35" fill="#fff" font-size="10.5" font-weight="bold" text-anchor="middle">Unity Framework</text>
+        <text x="657" y="50" fill="#dcfce7" font-size="9" text-anchor="middle">TEST_ASSERT_EQUAL</text>
+      </svg>
+      <div class="diagram-caption">การแยก Pure Logic ไว้ใน lib/ ทำให้รัน Unit Test บน CI ได้โดยไม่ต้องต่อบอร์ด ESP32 จริง</div>
+    </div>
+
+    <div class="triad">
+      <div class="triad-card triad-why">
+        <h4>❓ ทำไมต้องทำ (Why)</h4>
+        <p>การแก้โค้ดแล้วต้องเสียบสาย Flash ลงบอร์ดเพื่อเทสด้วยตาทุกครั้งช้ามาก และบน GitHub Actions ไม่มีบอร์ด ESP32 เสียบอยู่</p>
+      </div>
+      <div class="triad-card triad-how">
+        <h4>🛠️ ทำยังไง (How)</h4>
+        <p>แยก Logic ไว้ใน <code>lib/</code>, เพิ่ม <code>[env:native]</code> ใน <code>platformio.ini</code> และเขียนเทสด้วย Unity ใน <code>test/test_native/</code></p>
+      </div>
+      <div class="triad-card triad-ben">
+        <h4>✨ ทำแล้วดียังไง (Benefits)</h4>
+        <p>รันเทสทั้งหมดเสร็จในไม่กี่วินาที, มั่นใจว่าแก้ฟังก์ชันหนึ่งไม่ทำให้ส่วนอื่นพัง, และรันบน CI ได้อัตโนมัติ</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-box">
+        <span class="step-num">1</span><span class="step-title">รัน Native Unit Test ในเครื่อง</span>
+        <pre class="cmd">pio test -e native -v</pre>
+      </div>
+      <div class="step-box">
+        <span class="step-num">2</span><span class="step-title">รัน Hardware Test เมื่อต่อบอร์ด ESP32</span>
+        <pre class="cmd">pio test -e esp32doit-devkit-v1</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module">
+    <div class="module-header">
+      <div>
+        <span class="module-tag">MODULE 5</span>
+        <h2>GitHub Actions — Continuous Integration (CI)</h2>
+      </div>
+      <div class="video-pill">🎬 วิดีโอ: videos/05-github-actions-ci.mp4</div>
+    </div>
+
+    <div class="diagram-box">
+      <svg viewBox="0 0 760 135" xmlns="http://www.w3.org/2000/svg">
+        <rect x="15" y="38" width="130" height="58" rx="8" fill="#0f172a"/>
+        <text x="80" y="62" fill="#fff" font-size="10.5" font-weight="bold" text-anchor="middle">Trigger</text>
+        <text x="80" y="78" fill="#7dd3fc" font-size="9" text-anchor="middle">PR / Push</text>
+        <text x="80" y="90" fill="#7dd3fc" font-size="8.5" text-anchor="middle">main, develop, release/*</text>
+
+        <line x1="145" y1="67" x2="180" y2="67" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="185" y="38" width="130" height="58" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+        <text x="250" y="62" fill="#854d0e" font-size="10.5" font-weight="bold" text-anchor="middle">Job 1: lint</text>
+        <text x="250" y="78" fill="#334155" font-size="9" text-anchor="middle">pre-commit</text>
+        <text x="250" y="90" fill="#334155" font-size="8.5" text-anchor="middle">clang-format check</text>
+
+        <line x1="315" y1="67" x2="350" y2="67" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="355" y="38" width="140" height="58" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="425" y="62" fill="#166534" font-size="10.5" font-weight="bold" text-anchor="middle">Job 2: unit-test</text>
+        <text x="425" y="78" fill="#334155" font-size="9" text-anchor="middle">pio test -e native</text>
+        <text x="425" y="90" fill="#334155" font-size="8.5" text-anchor="middle">(+ Cache .pio)</text>
+
+        <line x1="495" y1="67" x2="530" y2="67" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="535" y="38" width="200" height="58" rx="8" fill="#eff6ff" stroke="#0284c7" stroke-width="2"/>
+        <text x="635" y="60" fill="#1e40af" font-size="10.5" font-weight="bold" text-anchor="middle">Job 3: build-esp32</text>
+        <text x="635" y="76" fill="#334155" font-size="9" text-anchor="middle">pio run -e esp32doit-devkit-v1</text>
+        <text x="635" y="90" fill="#0369a1" font-size="8.5" text-anchor="middle">Upload Artifact บน release/*</text>
+      </svg>
+      <div class="diagram-caption">CI Pipeline (.github/workflows/ci.yml): ตรวจ 3 ด่านเรียงลำดับ ก่อนอนุญาตให้ Merge PR</div>
+    </div>
+
+    <div class="triad">
+      <div class="triad-card triad-why">
+        <h4>❓ ทำไมต้องทำ (Why)</h4>
+        <p>ป้องกันปัญหา "ในเครื่องฉันรันผ่าน แต่เครื่องเพื่อนพัง" และรับประกันว่าโค้ดใน PR คอมไพล์ลง ESP32 ได้จริง</p>
+      </div>
+      <div class="triad-card triad-how">
+        <h4>🛠️ ทำยังไง (How)</h4>
+        <p>สร้าง <code>.github/workflows/ci.yml</code> แบ่ง 3 Jobs (<code>lint</code> → <code>unit-test</code> → <code>build-esp32</code>) พร้อม Cache <code>~/.platformio</code></p>
+      </div>
+      <div class="triad-card triad-ben">
+        <h4>✨ ทำแล้วดียังไง (Benefits)</h4>
+        <p>ตรวจทุก PR อัตโนมัติ 24 ชม., มีไฟเขียว/แดงบอกชัดเจนก่อน Merge และโหลดไฟล์ทดสอบจาก <code>release/*</code> ได้</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-box">
+        <span class="step-num">1</span><span class="step-title">โครงสร้างไฟล์ .yml ของ GitHub Actions</span>
+        <pre class="cmd">name: ชื่อ Workflow ที่โชว์ในแท็บ Actions
+on:   เหตุการณ์ที่สั่งให้รัน (push, pull_request, tags)
+jobs: รายการงาน (เช่น lint, unit-test, build-esp32)
+  runs-on: ubuntu-latest   # เครื่องเสมือน (Runner)
+  needs: lint              # รอให้ job ก่อนหน้าผ่านก่อน
+  steps:
+    - uses: actions/checkout@v4  # เรียก Action สำเร็จรูป
+      with: ...                  # ส่งพารามิเตอร์ให้ Action
+    - run: pio test -e native    # รันคำสั่ง Shell เอง
+      if: startsWith(...)        # เงื่อนไขในการรัน</pre>
+      </div>
+      <div class="step-box">
+        <span class="step-num">2</span><span class="step-title">หาโค้ด Action (uses:) พวกนี้มาจากไหน?</span>
+        <pre class="cmd">1. GitHub Marketplace:
+   github.com/marketplace?type=actions
+2. Official Actions (เชื่อถือได้สูงสุด):
+   github.com/actions (checkout, setup-python, cache)
+3. วิธีดูวิธีใช้: เปิดดู README.md หรือ action.yml
+   ของ Repo นั้นเพื่อดู inputs (with:) และเวอร์ชันล่าสุด
+   * แนะนำระบุเลขเวอร์ชันเสมอ เช่น @v4 แทน @main</pre>
+      </div>
+    </div>
+
+    <div class="check-box">
+      <strong>✅ ตรวจผ่านด้วย:</strong> เปิดแท็บ <strong>Actions</strong> บน GitHub ต้องเห็นเครื่องหมายถูกสีเขียวครบ 3 Jobs หรือรัน <code>python exercises/verify.py --module 5</code>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module">
+    <div class="module-header">
+      <div>
+        <span class="module-tag">MODULE 6</span>
+        <h2>GitHub Actions — Continuous Delivery &amp; Release (CD)</h2>
+      </div>
+      <div class="video-pill">🎬 วิดีโอ: videos/06-github-actions-release.mp4</div>
+    </div>
+
+    <div class="diagram-box">
+      <svg viewBox="0 0 760 145" xmlns="http://www.w3.org/2000/svg">
+        <rect x="15" y="45" width="125" height="52" rx="8" fill="#0f172a"/>
+        <text x="77" y="68" fill="#fde047" font-size="10.5" font-weight="bold" text-anchor="middle">git tag v1.0.0</text>
+        <text x="77" y="84" fill="#fff" font-size="9" text-anchor="middle">Push Tag ขึ้น GitHub</text>
+
+        <line x1="140" y1="71" x2="175" y2="71" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="180" y="25" width="165" height="92" rx="8" fill="#eff6ff" stroke="#0284c7" stroke-width="2"/>
+        <text x="262" y="46" fill="#1e40af" font-size="10.5" font-weight="bold" text-anchor="middle">Build &amp; Merge Bin</text>
+        <text x="262" y="65" fill="#334155" font-size="8.8" text-anchor="middle">0x1000: bootloader.bin</text>
+        <text x="262" y="80" fill="#334155" font-size="8.8" text-anchor="middle">0x8000: partitions.bin</text>
+        <text x="262" y="95" fill="#334155" font-size="8.8" text-anchor="middle">0x10000: firmware.bin</text>
+
+        <line x1="345" y1="71" x2="385" y2="71" stroke="#64748b" stroke-width="2.5"/>
+
+        <rect x="390" y="20" width="345" height="102" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="562" y="44" fill="#166534" font-size="11" font-weight="bold" text-anchor="middle">GitHub Release v1.0.0 (+ Auto Release Notes)</text>
+        <rect x="408" y="58" width="148" height="48" rx="6" fill="#ffffff" stroke="#86efac"/>
+        <text x="482" y="78" fill="#0f172a" font-size="9.5" font-weight="bold" text-anchor="middle">firmware.bin</text>
+        <text x="482" y="95" fill="#475569" font-size="8.5" text-anchor="middle">ใช้ทำ OTA / อัปเดตแอป</text>
+
+        <rect x="570" y="58" width="148" height="48" rx="6" fill="#ffffff" stroke="#86efac"/>
+        <text x="644" y="78" fill="#0f172a" font-size="9.5" font-weight="bold" text-anchor="middle">merged-firmware.bin</text>
+        <text x="644" y="95" fill="#475569" font-size="8.5" text-anchor="middle">Flash บอร์ดใหม่ไฟล์เดียว (0x0)</text>
+      </svg>
+      <div class="diagram-caption">Release Pipeline (.github/workflows/release.yml): ได้ทั้งไฟล์อัปเดต OTA และไฟล์ Flash ใหม่ในคลิกเดียว</div>
+    </div>
+
+    <div class="triad">
+      <div class="triad-card triad-why">
+        <h4>❓ ทำไมต้องทำ (Why)</h4>
+        <p>การ Build ไฟล์ส่งให้ลูกค้า/ทีมอื่นด้วยมือเสี่ยงหยิบผิดเวอร์ชัน หรือส่งไฟล์ <code>firmware.bin</code> ไปอย่างเดียวแล้ว Flash บอร์ดใหม่ไม่ติด</p>
+      </div>
+      <div class="triad-card triad-how">
+        <h4>🛠️ ทำยังไง (How)</h4>
+        <p>สร้าง <code>.github/workflows/release.yml</code> ให้ทำงานเมื่อ Push Tag <code>v*.*.*</code> แล้วใช้ <code>esptool.py merge_bin</code> รวมไฟล์</p>
+      </div>
+      <div class="triad-card triad-ben">
+        <h4>✨ ทำแล้วดียังไง (Benefits)</h4>
+        <p>ได้ไฟล์ <code>.bin</code> ที่ตรงกับ Tag เสมอ, มี Release Notes อัตโนมัติ, และเลือกโหลดได้ทั้งแบบ OTA หรือไฟล์เดียวจบ</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-box">
+        <span class="step-num">1</span><span class="step-title">แตก release/v1.0.0 → CI ผ่าน → Rebase เข้า main &amp; ลบ Branch</span>
+        <pre class="cmd">git checkout -b release/v1.0.0 main
+# อัปเดต CHANGELOG / version แล้ว push ให้ ci.yml รันผ่าน
+git push -u origin release/v1.0.0
+gh pr create --base main --fill
+gh pr merge --rebase --delete-branch</pre>
+      </div>
+      <div class="step-box">
+        <span class="step-num">2</span><span class="step-title">ติด Tag v1.0.0 บน main → Trigger Release &amp; ตรวจผล</span>
+        <pre class="cmd">git checkout main && git pull origin main
+git tag -a v1.0.0 -m "release: v1.0.0"
+git push origin v1.0.0
+python exercises/verify.py --all</pre>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
