@@ -1,0 +1,128 @@
+[
+  {
+    "id": "s01",
+    "sec": "",
+    "title": "ESP32 Firmware Engineering",
+    "sub": "Git, Pre-commit, Testing & CI/CD",
+    "notes": "สวัสดีครับ ยินดีต้อนรับเข้าสู่ Workshop ESP32 Firmware Engineering วันนี้เราจะมาเรียนรู้การวางระบบวิศวกรรมซอฟต์แวร์สำหรับงาน Embedded ตั้งแต่การจัดการ Git ให้เป็นระเบียบ การตั้งด่านตรวจโค้ดในเครื่องด้วย Pre-commit การออกแบบ Unit Test ให้รันบน PC/Cloud ได้โดยไม่ต้องต่อบอร์ดจริง ไปจนถึงการสร้างระบบ CI/CD และ Release อัตโนมัติบน GitHub Actions ครับ\n(ไม่มีคลิกในสไลด์นี้)"
+  },
+  {
+    "id": "s02",
+    "sec": "01 · ภาพรวมระบบ",
+    "title": "Roadmap & Mindset",
+    "sub": "ภาพรวมระบบตั้งแต่นักพัฒนา → Local Gate → GitHub → Release",
+    "notes": "ภาพนี้คือแผนที่ทั้งหมดของ Workshop ครับ เราแบ่งการเดินทางของโค้ดออกเป็น 4 สถานีหลัก\nคลิก 1: นักพัฒนาเขียนโค้ดและแตก branch จาก main ตาม Issue ที่ได้รับ\nคลิก 2: Local Gate ด่านแรกในเครื่องของเราเอง ใช้ pre-commit ตรวจฟอร์แมต C++ และข้อความ commit ก่อนบันทึก\nคลิก 3: เมื่อ push ขึ้น GitHub เปิด Pull Request ระบบ CI บน Cloud จะรัน lint, unit test และคอมไพล์เฟิร์มแวร์ ESP32 ให้อัตโนมัติ\nคลิก 4: เมื่อติด Tag เวอร์ชัน เช่น v1.0.0 ระบบ CD จะรวมไฟล์ไบนารีและสร้างหน้า GitHub Release พร้อมให้ดาวน์โหลดไปแฟลชได้ทันที"
+  },
+  {
+    "id": "s03",
+    "sec": "01 · วิธีคิดและวางแผน",
+    "title": "วิธีคิดและวางแผนก่อนสร้าง CI",
+    "sub": "แบ่ง 3 ด่านเพื่อให้ครอบคลุมงาน Embedded และรู้ผลไว",
+    "notes": "ก่อนจะเขียนไฟล์ YAML สักบรรทัด เราต้องออกแบบด่านตรวจให้เหมาะกับธรรมชาติของงาน Embedded ครับ หลักการคือ Fail Fast — ข้อผิดพลาดเล็กน้อยต้องถูกจับให้เร็วที่สุด\nคลิก 1: ด่านที่ 1 Fast Local Gate รันบนเครื่องนักพัฒนา ใช้เวลาไม่กี่วินาที ตรวจรูปแบบโค้ด, YAML และ Conventional Commits\nคลิก 2: ด่านที่ 2 Cloud Unit Test & Build รันบน GitHub Actions ใช้เวลาหลักวินาทีถึง 2 นาที แยก Logic มารัน native test ก่อน แล้วค่อยคอมไพล์ข้ามแพลตฟอร์มเป็นเฟิร์มแวร์ ESP32\nคลิก 3: ด่านที่ 3 Automated Release ทำงานเฉพาะตอนติด Tag เวอร์ชัน เพื่อรวม bootloader, partitions และ firmware เป็นไฟล์เดียวพร้อมแจกจ่าย"
+  },
+  {
+    "id": "s04",
+    "sec": "01 · แหล่งเครื่องมือ",
+    "title": "หา Module / Actions / Hooks จากไหน?",
+    "sub": "เลือกจากแหล่งทางการ ตรวจสอบความน่าเชื่อถือ และ Pin Version เสมอ",
+    "notes": "คำถามยอดฮิตเวลาเริ่มทำ CI คือ เราจะไปหา Action หรือ Hook สำเร็จรูปมาจากไหน?\nคลิก 1: สำหรับ GitHub Actions ให้เริ่มจาก GitHub Marketplace และองค์กรทางการอย่าง actions/* เช่น actions/checkout, actions/cache, actions/upload-artifact รวมถึงผู้พัฒนาเครื่องมือโดยตรง เช่น astral-sh/setup-uv\nคลิก 2: สำหรับ Pre-commit Hooks ให้ดูจากเว็บทางการ pre-commit.com/hooks.html ซึ่งรวม hook มาตรฐาน เช่น pre-commit-hooks, mirrors-clang-format และ conventional-pre-commit\nคลิก 3: หลักสำคัญคือต้องเช็กจำนวนดาว การอัปเดตล่าสุด และ Pin Version ให้ชัดเจน เช่น @v7, @v10.3.3 หรือ rev: v6.0.0 ห้ามใช้ latest ลอยๆ เพื่อไม่ให้ Build พังในอนาคตครับ"
+  },
+  {
+    "id": "s05",
+    "sec": "02 · Git Workflow",
+    "title": "วงจรการทำงานของทีม (Workflow)",
+    "sub": "Issue → Branch → Commit → PR → Rebase → Release",
+    "notes": "มาดูวงจรการทำงานจริงใน Workshop นี้แบบ step-by-step ครับ\nคลิก 1: เริ่มจาก Issue เพื่อตกลงขอบเขตงานและเก็บประวัติปัญหา\nคลิก 2: แตก Branch ใหม่จาก main เช่น feature/fast-blink\nคลิก 3: เขียนโค้ดและ Commit ด้วยมาตรฐาน Conventional Commits โดยมี Pre-commit ช่วยตรวจ\nคลิก 4: หาก main มีอัปเดต ให้ Rebase ด้วย git rebase origin/main ให้ประวัติเป็นเส้นตรง\nคลิก 5: เปิด Pull Request รอ CI ผ่านทั้งหมด แล้วกด Rebase and merge\nคลิก 6: เมื่อพร้อมปล่อยเวอร์ชัน ให้ติด Tag v1.0.0 แล้ว push เพื่อทริกเกอร์ Release Workflow ครับ"
+  },
+  {
+    "id": "s06",
+    "sec": "02 · Issue Templates",
+    "title": "Issue & Issue Templates (*.yml)",
+    "sub": "บังคับโครงสร้างข้อมูลให้ครบตั้งแต่ต้นทางด้วย GitHub Issue Forms",
+    "notes": "ปัญหาที่พบบ่อยเวลาแจ้งบั๊กคือบอกแค่ 'บอร์ดไม่ติดครับ' แล้วทีมไม่รู้ว่าใช้เวอร์ชันไหนหรือสภาพแวดล้อมใด\nคลิก 1: เราจึงสร้างไฟล์ใน .github/ISSUE_TEMPLATE/ ได้แก่ bug_report.yml, feature_request.yml และ config.yml (ตั้ง blank_issues_enabled: false เพื่อบังคับใช้ฟอร์ม)\nคลิก 2: โครงสร้าง YAML ประกอบด้วย name, labels และ body ที่มี input, dropdown, textarea พร้อม validations: required: true\nคลิก 3: ภาพจริงบน GitHub จะเห็นเมนูเลือกฟอร์มที่เป็นระเบียบ ช่วยลดเวลาถาม-ตอบซ้ำซ้อนครับ"
+  },
+  {
+    "id": "s07",
+    "sec": "02 · Conventional Commits",
+    "title": "Commit & Conventional Commits",
+    "sub": "เขียนข้อความ Commit ให้ทั้งคนและเครื่องอ่านเข้าใจตรงกัน",
+    "notes": "ข้อความ Commit ที่ดีไม่ควรเขียนแค่ 'update' หรือ 'fix bug' ครับ\nคลิก 1: โครงสร้างมาตรฐานคือ <type>(<scope>): <description> เช่น feat(blink): add fast blink interval calculation\nคลิก 2: ประเภทที่ใช้บ่อยใน Workshop ได้แก่ feat (ฟีเจอร์ใหม่), fix (แก้บั๊ก), docs (เอกสาร), test (เทส), ci (เวิร์กโฟลว์) และ chore (งานดูแลโปรเจกต์)\nคลิก 3: ประโยชน์คือทีมไล่ประวัติ git log ได้ง่าย และเครื่องมือ CI สามารถดึงข้อความเหล่านี้ไปสร้าง Release Notes อัตโนมัติได้ทันทีครับ"
+  },
+  {
+    "id": "s08",
+    "sec": "02 · Local Gate",
+    "title": "Pre-commit Hooks & .clang-format",
+    "sub": "ด่านตรวจอัตโนมัติในเครื่อง ก่อนที่โค้ดจะถูกบันทึกเข้า Git",
+    "notes": "ต่อให้ทีมตกลงมาตรฐานกันดีแค่ไหน คนเราก็ลืมจัดฟอร์แมตหรือเผลอ commit ไฟล์ใหญ่ได้ครับ เราจึงใช้ .pre-commit-config.yaml เป็นผู้คุมกฎอัตโนมัติ\nคลิก 1: โครงสร้างหลักแบ่งเป็น repos (แหล่งที่มาของ hook), rev (เวอร์ชันที่ pin ไว้), hooks (id ของตัวตรวจ) และ stages เช่น [commit-msg]\nคลิก 2: เราผสาน 3 ชุด ได้แก่ pre-commit-hooks พื้นฐาน, mirrors-clang-format คู่กับไฟล์ .clang-format (Google style, IndentWidth: 2) และ conventional-pre-commit\nคลิก 3: ภาพตัวอย่างใน Terminal จะเห็นผลตรวจ Passed ทุกข้อในเสี้ยววินาทีครับ"
+  },
+  {
+    "id": "s09",
+    "sec": "02 · Branch History",
+    "title": "Rebase vs Merge",
+    "sub": "ทำไม Workshop นี้ใช้ git rebase origin/main เพื่อประวัติเส้นตรง",
+    "notes": "เวลาหลายๆ คนทำงานพร้อมกัน ประวัติ Git มักจะพันกันเป็นใยแมงมุมจากการ merge ไปมา\nคลิก 1: แบบ Merge ปกติจะสร้าง Merge Commit ซ้ำซ้อน ทำให้ไล่หาจุดที่เกิดบั๊กยาก\nคลิก 2: แบบ Rebase ด้วยคำสั่ง git rebase origin/main จะย้าย commit ของเราไปต่อท้าย main ล่าสุด ทำให้ประวัติเป็นเส้นตรงสะอาดตา อ่านง่าย และใช้ git bisect หาบั๊กได้แม่นยำ\nคลิก 3: ภาพ Terminal ด้านล่างแสดง git log --oneline --graph ที่เรียงต่อกันเป็นเส้นตรงสวยงามครับ"
+  },
+  {
+    "id": "s10",
+    "sec": "02 · Pull Request",
+    "title": "Pull Request & Branch Protection",
+    "sub": "ใช้ pull_request_template.md และล็อก main จนกว่า CI จะผ่าน",
+    "notes": "ก่อนโค้ดจะเข้าสู่ branch หลัก main ต้องผ่านด่าน Pull Request และการตรวจจากเพื่อนร่วมทีมครับ\nคลิก 1: ไฟล์ .github/pull_request_template.md ช่วยสร้าง Checklist มาตรฐาน และใช้คำว่า Closes #2 ในรายละเอียด PR เพื่อปิด Issue อัตโนมัติเมื่อ merge\nคลิก 2: ตั้ง Branch Protection บน main เพื่อล็อกปุ่ม Merge จนกว่า CI จะขึ้นสีเขียวทั้งหมด และกำหนดให้ใช้ Rebase and merge พร้อมลบ branch ทิ้งหลังรวมโค้ด\nคลิก 3: ภาพจริงแสดงหน้า PR ที่มี Checklist ครบ สถานะ Checks ผ่าน และปุ่ม Merge ที่พร้อมใช้งานครับ"
+  },
+  {
+    "id": "s11",
+    "sec": "03 · Embedded Testing",
+    "title": "การออกแบบ Test สำหรับ Embedded",
+    "sub": "แยก Pure Logic ออกจาก Hardware เพื่อรัน Unit Test ใน < 1 วินาที",
+    "notes": "หลายคนคิดว่าเขียนเฟิร์มแวร์ ESP32 ต้องต่อบอร์ดจริงถึงจะเทสได้ แต่จริงๆ แล้วเราทดสอบบน PC และ Cloud ได้เร็วกว่ามากครับ\nคลิก 1: หลักการคือแยก Pure Logic ที่ไม่พึ่งพาทาร์ดแวร์ เช่น การคำนวณคาบเวลาไฟกะพริบ ไปไว้ใน workshop/lib/blink_math/blink_math.cpp\nคลิก 2: ส่วนที่เรียกใช้ GPIO, digitalWrite หรือ delay ของ Arduino ให้แยกไว้ใน workshop/src/main.cpp\nคลิก 3: ผลลัพธ์คือเราสามารถคอมไพล์ blink_math ด้วย gcc บนเครื่อง หรือ GitHub Runner (native) เพื่อรัน Unity Unit Test ได้ภายในไม่ถึง 1 วินาที โดยไม่ต้องมีบอร์ด ESP32 เลยครับ"
+  },
+  {
+    "id": "s12",
+    "sec": "03 · PlatformIO Test",
+    "title": "โครงสร้างไฟล์ Test & PlatformIO",
+    "sub": "แยก environment [env:native] และ [env:esp32doit-devkit-v1] ใน platformio.ini",
+    "notes": "มาดูโครงสร้างไฟล์จริงในโปรเจกต์ PlatformIO ของเรากันครับ\nคลิก 1: ใน platformio.ini เรากำหนด 2 environment คือ [env:esp32doit-devkit-v1] สำหรับบอร์ดจริง (test_filter = test_esp32) และ [env:native] สำหรับรันบน PC/CI (ตั้ง test_build_src = no เพื่อไม่ดึง main.cpp ที่มี Arduino.h มาคอมไพล์)\nคลิก 2: ไฟล์เทสแยกเป็น test/test_native/test_main.cpp และ test/test_esp32/test_hardware.cpp ใช้คำสั่ง pio test -e native และ pio run -e esp32doit-devkit-v1\nคลิก 3: ภาพ Terminal แสดงผลการบิลด์และเทสผ่านครบทุกเคสครับ"
+  },
+  {
+    "id": "s13",
+    "sec": "04 · GitHub Actions CI",
+    "title": "กายวิภาคของ ci.yml (ส่วนที่ 1)",
+    "sub": "Triggers (on:), Jobs (runs-on: ubuntu-latest) และ Steps (uses: vs run:)",
+    "notes": "คราวนี้เรามาแกะไฟล์ .github/workflows/ci.yml ทีละท่อนครับ\nคลิก 1: ส่วนบนสุดคือ name และ on: กำหนดทริกเกอร์ให้ทำงานเมื่อมี push เข้า main หรือ release/** และเมื่อเปิด pull_request เข้า main พร้อมตั้ง defaults.run.working-directory: workshop\nคลิก 2: ส่วน jobs: ประกาศงานย่อยและระบุเครื่องรันด้วย runs-on: ubuntu-latest\nคลิก 3: ภายใน steps: มี 2 แบบคือ uses: สำหรับเรียก Action สำเร็จรูป (เช่น actions/checkout@v7) และ run: สำหรับรันคำสั่ง shell โดยตรง (เช่น pio test -e native -v) ครับ"
+  },
+  {
+    "id": "s14",
+    "sec": "04 · CI Pipeline & Cache",
+    "title": "กายวิภาคของ ci.yml (ส่วนที่ 2)",
+    "sub": "ลำดับงานด้วย needs:, เร่งความเร็วด้วย Cache และเก็บ Artifacts",
+    "notes": "ส่วนที่สองของ ci.yml คือการเชื่อมโยงงานและเพิ่มความเร็วครับ\nคลิก 1: เราใช้ keyword needs: เพื่อกำหนดลำดับ เช่น unit-test มี needs: lint และ build-esp32 มี needs: unit-test (หรือถ้ารัน lint กับ test-native แบบขนาน ก็ช่วยลดเวลารวมได้เมื่อมี runner เพียงพอ)\nคลิก 2: ใช้ actions/cache@v6 เก็บ ~/.platformio โดยผูก key กับ hashFiles('workshop/platformio.ini') ช่วยประหยัดเวลาดาวน์โหลด toolchain หลายนาที\nคลิก 3: ใช้ actions/upload-artifact@v7 เก็บไฟล์ .bin เมื่อ build บน branch release/** และภาพขวาคือกราฟ Pipeline จริงบน GitHub Actions ครับ"
+  },
+  {
+    "id": "s15",
+    "sec": "04 · Release CD",
+    "title": "Release Workflow (release.yml)",
+    "sub": "Tag v*.*.* → esptool merge-bin → สร้าง GitHub Release อัตโนมัติ",
+    "notes": "เมื่อโค้ดพร้อมปล่อยเวอร์ชัน เราไม่ต้องมานั่งคอมไพล์และอัปโหลดไฟล์เองครับ ไฟล์ release.yml จะจัดการให้ทั้งหมด\nคลิก 1: ทริกเกอร์ทำงานเมื่อ push tag ที่ตรงรูปแบบ v*.*.* และต้องกำหนด permissions: contents: write เพื่อให้ workflow สร้างหน้า Release ได้\nคลิก 2: หลังรัน test และ build แล้ว เราใช้ esptool --chip esp32 merge-bin รวม bootloader.bin (0x1000), partitions.bin (0x8000) และ firmware.bin (0x10000) เป็นไฟล์เดียวที่ flash ได้ทันทีที่ 0x0\nคลิก 3: สุดท้าย softprops/action-gh-release@v3 จะสร้างหน้า Release พร้อมไฟล์แนบและ Release Notes ดังภาพตัวอย่างครับ"
+  },
+  {
+    "id": "s16",
+    "sec": "05 · Auto Verification",
+    "title": "การตรวจงานอัตโนมัติ (check_env & verify)",
+    "sub": "ให้นักเรียนเช็กความพร้อมเครื่องและตรวจคำตอบด้วยตัวเองได้ทุก Module",
+    "notes": "เพื่อให้ผู้เรียนใน Workshop ไม่ติดปัญหาเครื่องมือไม่ครบหรือทำ Lab ผิดจุด เราจึงสร้างสคริปต์ Python ช่วยตรวจ 2 ตัวครับ\nคลิก 1: exercises/check_env.py ใช้รันก่อนเริ่มเรียน เพื่อตรวจ Git, Python, pre-commit, gh CLI, PlatformIO และ gcc ว่าพร้อมใช้งานหรือไม่\nคลิก 2: exercises/verify.py ใช้ตรวจความคืบหน้าและคำตอบทั้ง 6 Modules แบบอัตโนมัติ ทั้งโครงสร้าง YAML, Conventional Commits, .pre-commit-config.yaml และผลรัน pio test\nคลิก 3: ภาพ Terminal ด้านขวาแสดงผลลัพธ์ PASS สีเขียวชัดเจนครับ"
+  },
+  {
+    "id": "s17",
+    "sec": "05 · Checklist",
+    "title": "สรุป Checklist วางระบบ CI/CD",
+    "sub": "6 ขั้นตอนสำหรับนำไปใช้กับโปรเจกต์ Embedded ของคุณเอง",
+    "notes": "ก่อนแยกย้าย นี่คือ Checklist 6 ข้อที่สามารถนำไปปรับใช้กับโปรเจกต์ของตัวเองได้ทันทีครับ\nคลิก 1: จัดโครงสร้าง Repo + Issue & PR Templates ให้ทีมสื่อสารตรงกัน\nคลิก 2: เปิดใช้ Pre-commit Hooks และ .clang-format ตั้งแต่วันแรก\nคลิก 3: ตกลงใช้ Conventional Commits และ Rebase ให้ประวัติเป็นเส้นตรง\nคลิก 4: แยก Pure Logic ออกจาก Hardware เพื่อรัน native unit test ให้เร็ว\nคลิก 5: เขียน ci.yml แบ่งด่าน lint → test → build พร้อม cache และ pin version\nคลิก 6: ตั้ง release.yml ด้วย Tag v*.*.* และ esptool merge-bin เพื่อส่งมอบเฟิร์มแวร์อย่างมั่นใจครับ"
+  },
+  {
+    "id": "s18",
+    "sec": "",
+    "title": "ขอบคุณครับ",
+    "sub": "ถาม - ตอบ (Q&A)",
+    "notes": "ขอบคุณทุกท่านที่ร่วมเรียนรู้ใน Workshop ESP32 Firmware Engineering วันนี้ครับ\nสามารถดูแบบฝึกหัดทั้งหมดได้ในโฟลเดอร์ exercises/ และคู่มือ Lab ใน docs/labs/\nเปิดโอกาสให้ซักถามและแลกเปลี่ยนประสบการณ์ได้เลยครับ\n(ไม่มีคลิกในสไลด์นี้)"
+  }
+]

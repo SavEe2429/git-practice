@@ -1,22 +1,25 @@
-repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-        args: ['--maxkb=500']
+# ==============================================================================
+# Skeleton สำหรับ LAB03: Pre-commit Hooks (จัดรูปแบบโค้ด & ตรวจ Commit Message)
+# คู่มืออ้างอิง : docs/labs/LAB03-Pre_commit_Hooks.pdf
+# ไฟล์เฉลย     : exercises/solutions/.pre-commit-config.yaml
+# คำสั่งติดตั้ง : pre-commit install && pre-commit install --hook-type commit-msg
+# ==============================================================================
 
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v23.1.5
-    hooks:
-      - id: clang-format
-        types_or: [c++, c]
+repos: []
+  # TODO (LAB03 - ส่วนที่ 1): เพิ่ม repo `https://github.com/pre-commit/pre-commit-hooks` (rev: v6.0.0)
+  # พร้อม hooks:
+  # - trailing-whitespace
+  # - end-of-file-fixer
+  # - check-yaml
+  # - check-added-large-files (args: ['--maxkb=500'])
 
-  - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.5.0
-    hooks:
-      - id: conventional-pre-commit
-        stages: [commit-msg]
-        args: [feat, fix, docs, style, refactor, test, ci, chore, build]
+  # TODO (LAB03 - ส่วนที่ 2): เพิ่ม repo `https://github.com/pre-commit/mirrors-clang-format` (rev: v23.1.5)
+  # พร้อม hook:
+  # - id: clang-format
+  #   types_or: [c++, c]
+
+  # TODO (LAB03 - ส่วนที่ 3): เพิ่ม repo `https://github.com/compilerla/conventional-pre-commit` (rev: v4.5.0)
+  # พร้อม hook สำหรับตรวจ Conventional Commits:
+  # - id: conventional-pre-commit
+  #   stages: [commit-msg]
+  #   args: [feat, fix, docs, style, refactor, test, ci, chore, build]

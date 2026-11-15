@@ -22,7 +22,19 @@ venv/
 
 # Video / Temp generation
 videos/_tmp_frames/
+videos/_tmp*/
+videos/vendor/
 *.log
+
+# Generated intermediate docs / presentation previews
+docs/labs_html/
+docs/presentation/out/
+docs/presentation/temp/
+
+# Microsoft Office lock/temp files
+~$*.docx
+~$*.pptx
+~$*.xlsx
 
 # OS
 .DS_Store

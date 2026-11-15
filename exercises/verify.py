@@ -217,7 +217,7 @@ class Checker:
         rel_file = self.repo_root / ".github" / "workflows" / "release.yml"
         if rel_file.exists():
             content = rel_file.read_text(encoding="utf-8", errors="ignore")
-            if "v*.*.*" in content and "merge_bin" in content:
+            if "v*.*.*" in content and ("merge_bin" in content or "merge-bin" in content):
                 self.record("PASS", "release.yml", "พบ workflow ที่ trigger ด้วย tag v*.*.* และรวม merged-firmware.bin")
             else:
                 self.record("FAIL", "release.yml", "release.yml ควรมี trigger 'v*.*.*' และคำสั่ง esptool merge_bin")
