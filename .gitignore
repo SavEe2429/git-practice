@@ -28,8 +28,8 @@ videos/vendor/
 
 # Generated intermediate docs / presentation previews
 docs/labs_html/
-docs/presentation/out/
-docs/presentation/temp/
+presentation/out/
+presentation/temp/
 
 # Microsoft Office lock/temp files
 ~$*.docx

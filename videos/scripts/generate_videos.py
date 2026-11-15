@@ -19,7 +19,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 WIDTH, HEIGHT = 1280, 720
 FPS = 24
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parents[2]
 IMAGES_DIR = ROOT_DIR / "docs" / "images"
 
 # Snow & Arctic Blue Palette
@@ -913,7 +913,7 @@ def main() -> int:
     if not shutil.which("ffmpeg"):
         print("Error: ffmpeg not found in PATH", file=sys.stderr)
         return 1
-    out_dir = Path(__file__).resolve().parent
+    out_dir = Path(__file__).resolve().parents[1]
     for filename, dur, renderer in SCENES:
         render_video(filename, dur, renderer, out_dir)
     return 0

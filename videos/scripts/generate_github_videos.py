@@ -954,7 +954,7 @@ def main() -> int:
     if not shutil.which("ffmpeg"):
         print("Error: ffmpeg not found in PATH", file=sys.stderr)
         return 1
-    out_dir = Path(__file__).resolve().parent / "github"
+    out_dir = Path(__file__).resolve().parents[1] / "github"
     out_dir.mkdir(parents=True, exist_ok=True)
     for filename, dur, renderer in SCENES:
         render_video(filename, dur, renderer, out_dir)
