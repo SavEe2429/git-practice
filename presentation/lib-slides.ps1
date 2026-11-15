@@ -10,21 +10,14 @@ function RGBc([string]$h) {
 }
 
 $NAVY   = RGBc '1F5F8B'
-$BLUE   = RGBc '1F5F8B'
+$DEEP   = RGBc '12306E'
+$BLUE   = RGBc '3B7DD8'
 $SKY    = RGBc 'C9DDEE'
 $SKY2   = RGBc 'A9C8E2'
 $PALE   = RGBc 'E6EFF7'
-$AMBER  = RGBc 'F0A93B'
-$CREAM  = RGBc 'FDF7EC'
-$CREAM2 = RGBc 'F6E7DF'
 $WHITE  = RGBc 'FFFFFF'
-$STEEL  = RGBc 'E6EFF7'
-$RUN    = RGBc '2E8B57'
-$FAULT  = RGBc 'C8413B'
-$RUNT   = RGBc 'E3F2E9'
-$FAULTT = RGBc 'FBE4E2'
-$AMBERT = RGBc 'FDEFD6'
-$DARK   = RGBc '1E293B'
+$STEEL  = RGBc 'E9EDF3'
+$DARK   = RGBc '12306E'
 $INK    = RGBc '111827'
 $MUTED  = RGBc '64748B'
 
@@ -140,8 +133,8 @@ function Card($s, $x, $y, $w, $h) {
 function Label($s, $text, $x, $y, $w, $h, $style) {
     switch ($style) {
         'solid' { $f = $NAVY;   $l = $NAVY;  $c = $WHITE }
-        'dark'  { $f = $NAVY;   $l = $SKY;   $c = $WHITE }
-        'amber' { $f = $AMBERT; $l = $AMBER; $c = $NAVY }
+        'dark'  { $f = $DEEP;   $l = $SKY;   $c = $WHITE }
+        'amber' { $f = $PALE;   $l = $BLUE;  $c = $DEEP }
         default { $f = $WHITE;  $l = $NAVY;  $c = $NAVY }
     }
     $b = Box $s 5 $x $y $w $h $f $l 2.25; $b.Adjustments.Item(1) = 0.3
@@ -170,13 +163,13 @@ function Callout($s, $text, $lx, $ly, $lw, $lh, $tx, $ty) {
 function Node($s, $text, $x, $y, $w, $h, $style, $size) {
     if (-not $size) { $size = 20 }
     switch ($style) {
-        'solid' { $f = $NAVY;   $l = -1;     $c = $WHITE }
-        'acc'   { $f = $PALE;   $l = -1;     $c = $NAVY }
-        'tint'  { $f = $STEEL;  $l = -1;     $c = $NAVY }
-        'good'  { $f = $RUNT;   $l = $RUN;   $c = $NAVY }
-        'bad'   { $f = $FAULTT; $l = $FAULT; $c = $NAVY }
-        'amber' { $f = $AMBERT; $l = $AMBER; $c = $NAVY }
-        default { $f = $WHITE;  $l = $NAVY;  $c = $NAVY }
+        'solid' { $f = $NAVY;  $l = -1;    $c = $WHITE }
+        'acc'   { $f = $PALE;  $l = $SKY;  $c = $NAVY }
+        'tint'  { $f = $STEEL; $l = $SKY;  $c = $DEEP }
+        'good'  { $f = $PALE;  $l = $NAVY; $c = $DEEP }
+        'bad'   { $f = $WHITE; $l = $SKY2; $c = $MUTED }
+        'amber' { $f = $BLUE;  $l = -1;    $c = $WHITE }
+        default { $f = $WHITE; $l = $NAVY; $c = $NAVY }
     }
     $b = Box $s 5 $x $y $w $h $f $l 2; $b.Adjustments.Item(1) = 0.12
     $tf = $b.TextFrame; $tf.WordWrap = -1; $tf.MarginLeft = 8; $tf.MarginRight = 8; $tf.MarginTop = 3; $tf.MarginBottom = 3; $tf.VerticalAnchor = 3
@@ -549,7 +542,7 @@ function Build-s17($s, $it, $pos) {
         $x = 40 + ($k % 2) * 450; $y = 144 + [int][Math]::Floor($k / 2) * 112; $k++
         $c = Box $s 5 $x $y 430 98 $WHITE $STEEL 1.5; $c.Adjustments.Item(1) = 0.08
         $parts = @($c)
-        if ($e[2]) { $parts += (Box $s 1 $x ($y + 8) 8 82 $(if ($e[2] -eq 'amber') { $AMBER } else { $RUN }) -1 0) }
+        if ($e[2]) { $parts += (Box $s 1 $x ($y + 8) 8 82 $(if ($e[2] -eq 'amber') { $BLUE } else { $NAVY }) -1 0) }
         $b = Box $s 9 ($x + 18) ($y + 24) 48 48 $STEEL -1 0
         $b.TextFrame.TextRange.Text = "$k"; $b.TextFrame.TextRange.Font.Name = $FONT; $b.TextFrame.TextRange.Font.NameComplexScript = $FONT
         $b.TextFrame.TextRange.Font.Size = 24; $b.TextFrame.TextRange.Font.Bold = -1; $b.TextFrame.TextRange.Font.Color.RGB = $NAVY
