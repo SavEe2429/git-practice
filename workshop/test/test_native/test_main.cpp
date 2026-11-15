@@ -2,7 +2,7 @@
  * @file test_main.cpp
  * @brief ไฟล์เริ่มต้น (Starter) สำหรับเขียน Unit Test ด้วย Unity บน [env:native]
  *
- * อ้างอิงคู่มือ: docs/workshop-manual.pdf (Module 4: Unit Testing บน PlatformIO)
+ * อ้างอิงคู่มือ: docs/labs/LAB04-PlatformIO_Unit_Testing.pdf (Module 4: Unit Testing บน PlatformIO)
  * อ้างอิงโจทย์: exercises/exercises.md (Module 4)
  * ไฟล์เฉลย:   exercises/solutions/test/test_native/test_main.cpp
  */

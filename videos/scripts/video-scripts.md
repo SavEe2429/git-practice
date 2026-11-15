@@ -1,6 +1,6 @@
 # Video Scripts & Storyboards (ประกอบคู่มือทั้ง 6 Modules)
 
-ไฟล์นี้เป็นสคริปต์และ Storyboard สำหรับวิดีโอ Motion Graphic แบบกระชับ (**15–18 วินาที**) ในธีมสีหิมะ ขาว-น้ำเงิน (**Snow & Arctic Blue** `#F4F8FC`) รูปแบบ **Command/Event (CLI ภาษาอังกฤษล้วน) → Detector/Gate → Visual Reaction + ภาพผลลัพธ์จริงจาก `docs/images/`** ความละเอียด `1280x720` @ `24fps` (Silent Visual Loop) ที่สร้างจาก `videos/generate_videos.py`
+ไฟล์นี้เป็นสคริปต์และ Storyboard สำหรับวิดีโอ Motion Graphic แบบกระชับ (**15–18 วินาที**) ในธีมสีหิมะ ขาว-น้ำเงิน (**Snow & Arctic Blue** `#F4F8FC`) รูปแบบ **Command/Event (CLI ภาษาอังกฤษล้วน) → Detector/Gate → Visual Reaction + ภาพผลลัพธ์จริงจาก `docs/images/`** ความละเอียด `1280x720` @ `24fps` (Silent Visual Loop) ที่สร้างจาก `videos/scripts/generate_videos.py`
 
 ---
 

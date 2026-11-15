@@ -87,7 +87,7 @@ uv run exercises/verify.py --all
   1. เปิด **GitHub Marketplace (`github.com/marketplace?type=actions`)** ค้นหา Action ที่ใช้ในงาน (เช่น `actions/checkout`, `actions/setup-python`, `actions/cache`, `pre-commit/action`) แล้วดูแท็บ **Usage** และเวอร์ชันล่าสุด (`@v4`, `@v5`)
   2. สร้าง `.github/workflows/ci.yml` โดยระบุ `on:` (Trigger), `jobs:` (`lint` → `unit-test` → `build-esp32` เชื่อมด้วย `needs:`), และ `steps:` (`uses:` / `with:` / `run:` / `if:`)
   3. ตั้งค่า Cache `~/.platformio` และอัปโหลด Build Artifact เฉพาะเมื่อ Push branch `release/*`
-  4. เปิด PR จาก `feature/*` เข้า `develop` ใน Fork ของตัวเอง แล้วดูผลลัพธ์สีเขียวบนแท็บ **Actions**
+  4. เปิด PR จาก `feature/*` เข้า `main` ใน Fork ของตัวเอง แล้วดูผลลัพธ์สีเขียวบนแท็บ **Actions**
 - **เกณฑ์ผ่าน:**
   - [ ] อธิบายความหมายของ `on`, `jobs`, `needs`, `uses`, `with`, `run`, `if` ใน `ci.yml` ได้
   - [ ] แท็บ GitHub Actions แสดงเครื่องหมายถูกสีเขียวครบทั้ง 3 jobs
@@ -96,7 +96,7 @@ uv run exercises/verify.py --all
 
 ### แบบฝึกหัดเสริม (Break & Fix Lab): จำลอง CI พัง & Merge Conflict
 1. **CI แดง:** ลองแก้ `test_add_numbers_positive` ใน `test_main.cpp` ให้คาดหวังค่าผิด (เช่น `TEST_ASSERT_EQUAL_INT(99, ...)`) แล้ว Push เข้า PR → ดู CI ขึ้น ❌ สีแดงและบล็อก Merge → อ่าน Log แก้กลับให้ถูกต้องจนเขียว ✅
-2. **Merge Conflict:** แก้บรรทัดเดียวกันใน `src/main.cpp` บน 2 branches → Merge อันแรกเข้า `develop` → อีกอันจะติด Conflict → ฝึกแก้ด้วย `git pull origin develop` แล้วเลือกโค้ดที่ถูกต้องก่อน Commit
+2. **Merge Conflict:** แก้บรรทัดเดียวกันใน `src/main.cpp` บน 2 branches → Rebase & Merge อันแรกเข้า `main` → อีกอันจะติด Conflict → ฝึกแก้ด้วย `git fetch origin && git rebase origin/main` แล้วเลือกโค้ดที่ถูกต้องก่อน `git rebase --continue`
 
 ---
 
@@ -104,14 +104,14 @@ uv run exercises/verify.py --all
 **เป้าหมาย:** ปล่อยเวอร์ชันเฟิร์มแวร์อัตโนมัติเมื่อ Merge เข้า `main` และติด Tag `v*.*.*` พร้อมนำไฟล์ไป Flash ลงบอร์ดจริง
 - **โจทย์:**
   1. สร้าง `.github/workflows/release.yml` ที่ทำงานเมื่อ Push Tag `v*.*.*`
-  2. ใช้ `esptool.py merge_bin` รวม `bootloader.bin` + `partitions.bin` + `firmware.bin` เป็น `merged-firmware.bin`
+  2. ใช้ `esptool --chip esp32 merge-bin` รวม `bootloader.bin` + `partitions.bin` + `firmware.bin` เป็น `merged-firmware.bin`
   3. แตก branch `release/v1.0.0` จาก `main` → `git push -u origin release/v1.0.0` เพื่อให้ `ci.yml` รันตรวจผ่านสีเขียว
   4. เปิด PR เข้า `main` → กด **Rebase and merge** และลบ `release/v1.0.0` ทิ้ง (`main` ยังคงเป็นเส้นตรงเส้นเดียว)
   5. ติด Tag บน `main`: `git checkout main && git pull && git tag -a v1.0.0 -m "release: v1.0.0" && git push origin v1.0.0`
-  4. *(ถ้ามีบอร์ดจริง)* ดาวน์โหลด `esp32doit-v1.0.0-merged-firmware.bin` จากหน้า Releases แล้ว Flash ลงบอร์ดด้วย `esptool`:
+  6. *(ถ้ามีบอร์ดจริง)* ดาวน์โหลด `esp32doit-v1.0.0-merged-firmware.bin` จากหน้า Releases แล้ว Flash ลงบอร์ดด้วย `esptool`:
      ```bash
-     pip install esptool
-     esptool.py --chip esp32 --port COM3 --baud 460800 write_flash 0x0 esp32doit-v1.0.0-merged-firmware.bin
+     uv tool install esptool
+     esptool --chip esp32 --port COM3 --baud 460800 write-flash 0x0 esp32doit-v1.0.0-merged-firmware.bin
      ```
      *(หรือเปิดเว็บ [ESP Tool](https://espressif.github.io/esptool-js/) บน Chrome/Edge เสียบสาย USB แล้วเลือกไฟล์ที่ Address `0x0` ได้ทันทีโดยไม่ต้องลงโปรแกรม)*
 - **เกณฑ์ผ่าน:**

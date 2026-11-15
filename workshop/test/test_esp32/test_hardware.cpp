@@ -2,7 +2,7 @@
  * @file test_hardware.cpp
  * @brief ไฟล์เริ่มต้น (Starter) สำหรับเขียน Test บนบอร์ด DOIT ESP32 DevKit v1 จริง
  *
- * อ้างอิงคู่มือ: docs/workshop-manual.pdf (Module 4: Unit Testing บน PlatformIO)
+ * อ้างอิงคู่มือ: docs/labs/LAB04-PlatformIO_Unit_Testing.pdf (Module 4: Unit Testing บน PlatformIO)
  * อ้างอิงโจทย์: exercises/exercises.md (Module 4)
  * ไฟล์เฉลย:   exercises/solutions/test/test_esp32/test_hardware.cpp
  */

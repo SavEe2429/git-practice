@@ -11,9 +11,9 @@
 ## 2. ตารางเวลาแนะนำ (Half-Day ~4 ชั่วโมง / Full-Day ~6 ชั่วโมง)
 | ช่วงเวลา | เนื้อหา | สิ่งที่ผู้เรียนต้องทำได้ |
 | :--- | :--- | :--- |
-| 00:00 – 00:30 | เปิดตัว & เช็กเครื่อง (`check_env.py`) | Fork Repo + Clone + สร้าง `develop` |
-| 00:30 – 01:15 | **Module 1:** GitFlow & Conventional Commits | แตก `feature/*` + Commit ตามมาตรฐาน (`verify.py --module 1`) |
-| 01:15 – 02:00 | **Module 2:** Issue Forms (`.yml`), PR & Protection | สร้าง Issue `.yml` + เปิด PR เข้า `develop` (`verify.py --module 2`) |
+| 00:00 – 00:30 | เปิดตัว & เช็กเครื่อง (`check_env.py`) | Fork Repo + Clone ลงเครื่อง + ตรวจ `main` |
+| 00:30 – 01:15 | **Module 1:** Linear Git (Rebase) & Conventional Commits | แตก `feature/*` + Commit ตามมาตรฐาน + `git rebase` (`verify.py --module 1`) |
+| 01:15 – 02:00 | **Module 2:** Issue Forms (`.yml`), PR & Protection | สร้าง Issue `.yml` + เปิด PR เข้า `main` + Rebase & Merge (`verify.py --module 2`) |
 | 02:00 – 02:45 | **Module 3:** Pre-commit Hooks | ติดตั้ง hook + ทดลองทำผิดฟอร์แมต/ข้อความแล้วแก้ (`verify.py --module 3`) |
 | 02:45 – 03:30 | **Module 4:** PlatformIO Unit Test (`native`) | รัน `pio test -e native` ผ่าน 4+ เคส (`verify.py --module 4`) |
 | 03:30 – 04:30 | **Module 5:** GitHub Actions CI & YAML + Break & Fix | เขียน `ci.yml` + ทดลองทำให้ CI แดงแล้วแก้ให้เขียว (`verify.py --module 5`) |

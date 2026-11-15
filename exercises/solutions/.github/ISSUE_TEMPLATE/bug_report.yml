@@ -44,5 +44,5 @@ body:
     attributes:
       label: ยืนยันเบื้องต้น
       options:
-        - label: ทดสอบบน branch develop หรือ release ล่าสุดแล้ว
+        - label: ทดสอบบน branch main หรือ release ล่าสุดแล้ว
           required: true

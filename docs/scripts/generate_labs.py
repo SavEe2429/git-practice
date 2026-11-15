@@ -171,7 +171,7 @@ body:
     attributes:
       label: ยืนยันเบื้องต้น
       options:
-        - label: ทดสอบบน branch develop หรือ release ล่าสุดแล้ว
+        - label: ทดสอบบน branch main หรือ release ล่าสุดแล้ว
           required: true""",
             ),
             (
@@ -729,9 +729,9 @@ jobs:
           # Merge bootloader, partitions, and firmware into a single flashable binary (at 0x0)
           esptool --chip esp32 merge-bin \\
             -o "dist/esp32doit-${GITHUB_REF_NAME}-merged-firmware.bin" \\
-            --flash_mode dio \\
-            --flash_freq 40m \\
-            --flash_size 4MB \\
+            --flash-mode dio \\
+            --flash-freq 40m \\
+            --flash-size 4MB \\
             0x1000 "${BUILD_DIR}/bootloader.bin" \\
             0x8000 "${BUILD_DIR}/partitions.bin" \\
             0x10000 "${BUILD_DIR}/firmware.bin"

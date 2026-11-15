@@ -50,6 +50,20 @@ def find_pio() -> str:
     return ""
 
 
+def strip_comments(text: str, prefix: str = "#") -> str:
+    """Remove full-line and inline comments starting with prefix so TODO hints are ignored."""
+    lines = []
+    for line in text.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith(prefix):
+            continue
+        if f" {prefix}" in line:
+            line = line.split(f" {prefix}", 1)[0]
+        if line.strip():
+            lines.append(line)
+    return "\n".join(lines)
+
+
 class Checker:
     def __init__(self, repo_root: Path, project_dir: Path):
         self.repo_root = repo_root
@@ -115,8 +129,22 @@ class Checker:
 
         issue_dir = self.repo_root / ".github" / "ISSUE_TEMPLATE"
         issue_ymls = list(issue_dir.glob("*.yml")) + list(issue_dir.glob("*.yaml")) if issue_dir.exists() else []
-        if any(p.name != "config.yml" for p in issue_ymls):
-            self.record("PASS", "Issue Forms (.yml)", f"พบ {len(issue_ymls)} ไฟล์ใน .github/ISSUE_TEMPLATE/")
+        form_ymls = [p for p in issue_ymls if p.name != "config.yml"]
+        if form_ymls:
+            bug_file = issue_dir / "bug_report.yml"
+            feat_file = issue_dir / "feature_request.yml"
+            bug_ok = True
+            feat_ok = True
+            if bug_file.exists():
+                bug_active = strip_comments(bug_file.read_text(encoding="utf-8", errors="ignore"))
+                bug_ok = all(k in bug_active for k in ("id: version", "id: environment", "id: description", "id: checklist"))
+            if feat_file.exists():
+                feat_active = strip_comments(feat_file.read_text(encoding="utf-8", errors="ignore"))
+                feat_ok = all(k in feat_active for k in ("id: problem", "id: solution", "id: target_branch"))
+            if bug_ok and feat_ok:
+                self.record("PASS", "Issue Forms (.yml)", f"พบ {len(issue_ymls)} ไฟล์ใน .github/ISSUE_TEMPLATE/ และตั้งค่า fields ครบ")
+            else:
+                self.record("FAIL", "Issue Forms (.yml)", "ไฟล์ Issue Form ยังมี TODO ที่ต้องเติม fields ให้ครบ (ดู docs/labs/LAB02)")
         else:
             self.record("FAIL", "Issue Forms (.yml)", "ไม่พบไฟล์ .yml ใน .github/ISSUE_TEMPLATE/ (เช่น bug_report.yml)")
 
@@ -137,13 +165,13 @@ class Checker:
         print("\n=== Module 3: Pre-commit Hooks ===")
         cfg = self.repo_root / ".pre-commit-config.yaml"
         if cfg.exists():
-            text = cfg.read_text(encoding="utf-8", errors="ignore")
+            text = strip_comments(cfg.read_text(encoding="utf-8", errors="ignore"))
             has_cf = "clang-format" in text
             has_cc = "conventional-pre-commit" in text
-            if has_cf and has_cc:
+            if has_cf and has_cc and "repos: []" not in text:
                 self.record("PASS", ".pre-commit-config.yaml", "มีทั้ง clang-format และ conventional-pre-commit")
             else:
-                self.record("FAIL", ".pre-commit-config.yaml", "ต้องมีทั้ง clang-format และ conventional-pre-commit")
+                self.record("FAIL", ".pre-commit-config.yaml", "ต้องกำหนด repos และมีทั้ง clang-format และ conventional-pre-commit")
         else:
             self.record("FAIL", ".pre-commit-config.yaml", "ไม่พบไฟล์ .pre-commit-config.yaml ที่ root")
 
@@ -162,14 +190,23 @@ class Checker:
     def check_module_4(self) -> None:
         print("\n=== Module 4: PlatformIO Unit Testing ===")
         pio_ini = self.project_dir / "platformio.ini"
-        if pio_ini.exists() and "[env:native]" in pio_ini.read_text(encoding="utf-8", errors="ignore"):
-            self.record("PASS", "platformio.ini [env:native]", "ตั้งค่า native environment แล้ว")
+        if pio_ini.exists():
+            ini_active = strip_comments(strip_comments(pio_ini.read_text(encoding="utf-8", errors="ignore"), ";"), "#")
+            if "[env:native]" in ini_active and "test_build_src" in ini_active:
+                self.record("PASS", "platformio.ini [env:native]", "ตั้งค่า native environment แล้ว")
+            else:
+                self.record("FAIL", "platformio.ini [env:native]", "ยังไม่พบ [env:native] และ test_build_src = no ใน platformio.ini")
         else:
-            self.record("FAIL", "platformio.ini [env:native]", "ยังไม่พบ [env:native] ใน platformio.ini")
+            self.record("FAIL", "platformio.ini [env:native]", "ไม่พบ workshop/platformio.ini")
 
         native_tests = list((self.project_dir / "test").glob("test_native/*.cpp")) if (self.project_dir / "test").exists() else []
         if native_tests:
-            self.record("PASS", "Native test files", f"พบ {len(native_tests)} ไฟล์ใน test/test_native/")
+            test_code = strip_comments(native_tests[0].read_text(encoding="utf-8", errors="ignore"), "//")
+            run_count = len(re.findall(r"\bRUN_TEST\s*\(", test_code))
+            if run_count >= 4:
+                self.record("PASS", "Native test files", f"พบ {len(native_tests)} ไฟล์ใน test/test_native/ ({run_count} test cases)")
+            else:
+                self.record("FAIL", "Native test files", f"พบเพียง {run_count} test case(s) ใน test_main.cpp (ต้องมีอย่างน้อย 4 test cases)")
         else:
             self.record("FAIL", "Native test files", "ไม่พบไฟล์เทสใน test/test_native/")
 
@@ -191,11 +228,11 @@ class Checker:
         print("\n=== Module 5: GitHub Actions CI ===")
         ci_file = self.repo_root / ".github" / "workflows" / "ci.yml"
         if ci_file.exists():
-            content = ci_file.read_text(encoding="utf-8", errors="ignore")
-            if "pio test" in content and "pio run" in content:
+            content = strip_comments(ci_file.read_text(encoding="utf-8", errors="ignore"))
+            if "pio test" in content and "pio run" in content and "starter-placeholder" not in content:
                 self.record("PASS", "ci.yml", "พบ workflow ที่มีทั้ง pio test และ pio run")
             else:
-                self.record("FAIL", "ci.yml", "ci.yml ควรมีทั้ง pio test และ pio run")
+                self.record("FAIL", "ci.yml", "ci.yml ยังไม่สมบูรณ์ (ต้องมีทั้ง pio test และ pio run และลบ starter-placeholder)")
         else:
             self.record("FAIL", "ci.yml", "ไม่พบ .github/workflows/ci.yml ที่ root")
 
@@ -216,11 +253,11 @@ class Checker:
         print("\n=== Module 6: GitHub Actions Release (CD) ===")
         rel_file = self.repo_root / ".github" / "workflows" / "release.yml"
         if rel_file.exists():
-            content = rel_file.read_text(encoding="utf-8", errors="ignore")
-            if "v*.*.*" in content and ("merge_bin" in content or "merge-bin" in content):
+            content = strip_comments(rel_file.read_text(encoding="utf-8", errors="ignore"))
+            if "v*.*.*" in content and ("merge_bin" in content or "merge-bin" in content) and "starter-placeholder" not in content:
                 self.record("PASS", "release.yml", "พบ workflow ที่ trigger ด้วย tag v*.*.* และรวม merged-firmware.bin")
             else:
-                self.record("FAIL", "release.yml", "release.yml ควรมี trigger 'v*.*.*' และคำสั่ง esptool merge_bin")
+                self.record("FAIL", "release.yml", "release.yml ยังไม่สมบูรณ์ (ต้องมี trigger 'v*.*.*', esptool merge-bin และลบ starter-placeholder)")
         else:
             self.record("FAIL", "release.yml", "ไม่พบ .github/workflows/release.yml ที่ root")
 

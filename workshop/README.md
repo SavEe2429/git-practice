@@ -13,6 +13,4 @@
 pio run -e esp32doit-devkit-v1
 ```
 
-> ดูคู่มือฉบับเต็มได้ที่ `../docs/workshop-manual.pdf` และแบบฝึกหัดได้ที่ `../exercises/exercises.md`
-
-<!-- verified build & test -->
+> ดูใบงานปฏิบัติการได้ที่ `../docs/labs/` (สรุปสารบัญ `../docs/README.md`) และแบบฝึกหัดได้ที่ `../exercises/exercises.md`

@@ -52,11 +52,17 @@ def main() -> int:
         print('   -> แก้ไข: git config --global user.name "Your Name" && git config --global user.email "you@example.com"')
         fails += 1
 
-    # 2. pre-commit
+    # 2. uv
+    ok, ver = check_cmd(["uv", "--version"])
+    print(f"[{'OK' if ok else 'WARN'}] uv: {ver or 'ไม่พบ uv (แนะนำสำหรับรัน verify.py และติดตั้ง pre-commit)'}")
+    if not ok:
+        print("   -> แนะนำ: ดูวิธีติดตั้งที่ https://docs.astral.sh/uv/getting-started/installation/")
+
+    # 3. pre-commit
     ok, ver = check_cmd(["pre-commit", "--version"])
     print(f"[{'OK' if ok else 'MISSING'}] pre-commit: {ver or 'ยังไม่ติดตั้ง'}")
     if not ok:
-        print("   -> แก้ไข: pip install pre-commit")
+        print("   -> แก้ไข: uv tool install pre-commit  (หรือ pip install pre-commit)")
         fails += 1
 
     # 3. GitHub CLI
