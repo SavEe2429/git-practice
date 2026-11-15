@@ -26,10 +26,14 @@ videos/_tmp*/
 videos/vendor/
 *.log
 
-# Generated intermediate docs / presentation previews
+# Generated intermediate docs / presentation previews & local slide build sources
 docs/labs_html/
 presentation/out/
 presentation/temp/
+presentation/*.ps1
+presentation/content.json
+presentation/decor/
+presentation/img/
 
 # Microsoft Office lock/temp files
 ~$*.docx
