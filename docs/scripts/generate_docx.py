@@ -102,7 +102,30 @@ def add_section_heading(doc: Document, text: str) -> None:
     run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
 
 
+def _trailing_blank_paragraphs(doc: Document) -> int:
+    count = 0
+    for el in reversed(doc.element.body):
+        if el.tag.endswith("}p"):
+            text = "".join(el.itertext()).strip()
+            if text or el.xpath(".//*[local-name()='drawing']"):
+                break
+            count += 1
+        else:
+            break
+    return count
+
+
+def _ensure_blank_lines(doc: Document, count: int = 2) -> None:
+    missing = max(0, count - _trailing_blank_paragraphs(doc))
+    for _ in range(missing):
+        sp = doc.add_paragraph()
+        sp.paragraph_format.space_before = Pt(0)
+        sp.paragraph_format.space_after = Pt(2)
+
+
 def add_code_box(doc: Document, code_text: str, dark: bool = False) -> None:
+    """Insert generous two-line blank spacing before and after every code block."""
+    _ensure_blank_lines(doc, 2)
     tbl = doc.add_table(rows=1, cols=1)
     tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = tbl.cell(0, 0)
@@ -118,17 +141,12 @@ def add_code_box(doc: Document, code_text: str, dark: bool = False) -> None:
     run.font.name = "Consolas"
     run.font.size = Pt(8.5)
     run.font.color.rgb = RGBColor(0xE2, 0xE8, 0xF0) if dark else RGBColor(0x0F, 0x17, 0x2A)
-    spacer = doc.add_paragraph()
-    spacer.paragraph_format.space_before = Pt(0)
-    spacer.paragraph_format.space_after = Pt(4)
+    _ensure_blank_lines(doc, 2)
 
 
 def add_picture_block(doc: Document, img_path: Path, caption: str, width_inches: float = 6.4) -> None:
     """Insert generous two-line blank spacing before and after every screenshot."""
-    for _ in range(2):
-        sp = doc.add_paragraph()
-        sp.paragraph_format.space_before = Pt(0)
-        sp.paragraph_format.space_after = Pt(2)
+    _ensure_blank_lines(doc, 2)
 
     p_img = doc.add_paragraph()
     p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -147,10 +165,7 @@ def add_picture_block(doc: Document, img_path: Path, caption: str, width_inches:
     rc.font.size = Pt(9)
     rc.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
 
-    for _ in range(2):
-        sp = doc.add_paragraph()
-        sp.paragraph_format.space_before = Pt(0)
-        sp.paragraph_format.space_after = Pt(2)
+    _ensure_blank_lines(doc, 2)
 
 
 def add_paste_box(doc: Document, placeholder: str, min_height_inches: float = 0.9) -> None:

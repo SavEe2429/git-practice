@@ -1096,7 +1096,7 @@ TEMPLATE = """<!DOCTYPE html>
       background: #f8fad2;
       border: 1px solid #475569;
       padding: 8px 12px;
-      margin: 4px 0 10px 12px;
+      margin: 26px 0 26px 12px;
       font-family: "Consolas", "Courier New", monospace;
       font-size: 8.2pt;
       line-height: 1.38;
@@ -1110,7 +1110,7 @@ TEMPLATE = """<!DOCTYPE html>
       border: 1px solid #334155;
       border-radius: 4px;
       padding: 8px 12px;
-      margin: 6px 0 12px 12px;
+      margin: 26px 0 26px 12px;
       font-family: "Consolas", "Courier New", monospace;
       font-size: 8pt;
       line-height: 1.38;
