@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
 Workshop Verification Script (Hybrid Self-Check)
-ตรวจสอบความคืบหน้าและเกณฑ์ผ่านของแบบฝึกหัดทั้ง 6 Modules
+ตรวจสอบความคืบหน้าและเกณฑ์ผ่านของแบบฝึกหัดทั้ง 6 Modules (หลังเตรียมเครื่องตาม Lab 00)
 """
 
 import argparse
-import os
 import re
 import shutil
 import subprocess
@@ -51,7 +50,9 @@ def find_pio() -> str:
 
 
 def strip_comments(text: str, prefix: str = "#") -> str:
-    """Remove full-line and inline comments starting with prefix so TODO hints are ignored."""
+    """Remove full-line, inline, and C-style block comments so TODO hints are ignored."""
+    if prefix == "//":
+        text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
     lines = []
     for line in text.splitlines():
         stripped = line.lstrip()
@@ -68,7 +69,7 @@ class Checker:
     def __init__(self, repo_root: Path, project_dir: Path):
         self.repo_root = repo_root
         self.project_dir = project_dir
-        self.results: List[Tuple[str, str, str]] = []  # (status, label, detail)
+        self.results: List[Tuple[str, str, str]] = []
 
     def record(self, status: str, label: str, detail: str = "") -> None:
         self.results.append((status, label, detail))
@@ -82,11 +83,22 @@ class Checker:
         code, out, _ = run_cmd(["git", "remote"], self.repo_root)
         return code == 0 and bool(out.strip())
 
+    def is_github_remote(self) -> bool:
+        code, out, _ = run_cmd(["git", "remote", "-v"], self.repo_root)
+        return code == 0 and "github.com" in out.lower()
+
     def gh_ready(self) -> bool:
-        if not shutil.which("gh") or not self.has_remote():
+        if not shutil.which("gh") or not self.has_remote() or not self.is_github_remote():
             return False
         code, _, _ = run_cmd(["gh", "auth", "status"], self.repo_root)
         return code == 0
+
+    def online_skip_reason(self) -> str:
+        if not self.has_remote():
+            return "ข้ามการเช็กออนไลน์ (ยังไม่ได้ตั้ง remote)"
+        if not self.is_github_remote():
+            return "ข้ามการเช็กออนไลน์ (remote ปัจจุบันไม่ใช่ github.com)"
+        return "ข้ามการเช็กออนไลน์ (ยังไม่ได้ติดตั้ง gh หรือ gh auth login)"
 
     def check_module_1(self) -> None:
         print("\n=== Module 1: Linear History (Rebase) & Conventional Commits ===")
@@ -112,12 +124,63 @@ class Checker:
         if code == 0 and log_out:
             subjects = log_out.splitlines()
             valid = [s for s in subjects if CONVENTIONAL_RE.match(s)]
-            if valid:
-                self.record("PASS", "Conventional Commits", f"พบ {len(valid)}/{len(subjects)} commits ล่าสุดที่ถูกต้อง")
+            if valid and CONVENTIONAL_RE.match(subjects[0]):
+                self.record("PASS", "Conventional Commits", f"พบ {len(valid)}/{len(subjects)} commits ล่าสุดที่ถูกต้อง (รวม Commit ล่าสุด)")
+            elif valid:
+                self.record("FAIL", "Conventional Commits", f"Commit ล่าสุด (`{subjects[0]}`) ยังไม่ตรงรูปแบบ feat:/fix:/docs:/...")
             else:
                 self.record("FAIL", "Conventional Commits", "ไม่พบ commit ที่ขึ้นต้นด้วย feat:/fix:/docs:/...")
         else:
             self.record("FAIL", "Git commits", "ยังไม่มี commit ใน repository")
+
+        # ตรวจว่านักเรียนได้ลงมือสร้าง feature/* และ commit/rebase จริง (ไม่ให้ fresh clone หรือ commit ตรงบน main ผ่านเปล่า)
+        _, f_out, _ = run_cmd(["git", "branch", "--list", "feature/*"], self.repo_root)
+        feature_branches = [b.replace("*", "").strip() for b in f_out.splitlines() if b.strip()]
+        if feature_branches and "main" in branches:
+            all_ok = True
+            total_ahead = 0
+            for fb in feature_branches:
+                anc_code, _, _ = run_cmd(["git", "merge-base", "--is-ancestor", "main", fb], self.repo_root)
+                _, ahead_out, _ = run_cmd(["git", "log", f"main..{fb}", "--pretty=format:%s"], self.repo_root)
+                ahead_msgs = [m for m in ahead_out.splitlines() if m.strip()]
+                if anc_code != 0:
+                    self.record("FAIL", "Feature branch rebase", f"branch {fb} ยังไม่ได้ rebase ต่อจากปลาย main ล่าสุด (รัน git rebase upstream/main)")
+                    all_ok = False
+                    break
+                if not ahead_msgs:
+                    self.record("FAIL", "Feature branch commits", f"พบ branch {fb} แต่ยังไม่มี commit ใหม่ต่อจาก main")
+                    all_ok = False
+                    break
+                if not all(CONVENTIONAL_RE.match(m) for m in ahead_msgs):
+                    self.record("FAIL", "Feature branch commits", f"commit บน {fb} ยังไม่เป็นรูปแบบ Conventional Commits ทั้งหมด")
+                    all_ok = False
+                    break
+                total_ahead += len(ahead_msgs)
+            if all_ok:
+                self.record("PASS", "Feature branch & Rebase work", f"พบ {', '.join(feature_branches)} ({total_ahead} commit(s) ต่อปลาย main เป็นเส้นตรง)")
+        else:
+            # กรณี merge PR เข้า main และลบ feature/* ทิ้งไปแล้วใน Lab 02+
+            merged_done = False
+            if self.gh_ready():
+                pr_c, pr_o, _ = run_cmd(["gh", "pr", "list", "--state", "merged", "--limit", "1", "--json", "number"], self.repo_root)
+                if pr_c == 0 and pr_o and pr_o != "[]":
+                    merged_done = True
+            if not merged_done:
+                up_c, up_o, _ = run_cmd(["git", "log", "upstream/main..main", "--pretty=format:%s"], self.repo_root)
+                ref_c, ref_o, _ = run_cmd(["git", "reflog", "-n", "40"], self.repo_root)
+                has_branch_history = ref_c == 0 and any(
+                    ("moving from feature/" in line or "rebase (finish)" in line) for line in ref_o.splitlines()
+                )
+                if up_c == 0 and up_o.strip() and has_branch_history:
+                    merged_done = True
+            if merged_done:
+                self.record("PASS", "Feature branch & Rebase work", "merge งานเข้า main เรียบร้อยแล้ว (และลบ branch ย่อยแล้ว)")
+            else:
+                self.record(
+                    "FAIL",
+                    "Feature branch & Rebase work",
+                    "ยังไม่พบ branch `feature/*` ที่แตกจาก main เพื่อทำงาน (ให้ทำ LAB01: `git switch -c feature/fast-blink main` แล้ว commit ก่อน)",
+                )
 
     def check_module_2(self) -> None:
         print("\n=== Module 2: Pull Request, Issue Forms (.yml) & Collaboration ===")
@@ -149,7 +212,7 @@ class Checker:
             self.record("FAIL", "Issue Forms (.yml)", "ไม่พบไฟล์ .yml ใน .github/ISSUE_TEMPLATE/ (เช่น bug_report.yml)")
 
         if not self.gh_ready():
-            self.record("WARN", "GitHub PR check", "ข้ามการเช็ก PR ออนไลน์ (ยังไม่ได้เชื่อมต่อ remote หรือ gh auth login)")
+            self.record("WARN", "GitHub PR check", self.online_skip_reason())
             return
 
         code, out, _ = run_cmd(
@@ -185,7 +248,7 @@ class Checker:
         if hook_pre.exists() and hook_msg.exists():
             self.record("PASS", "Git hooks installed", "ติดตั้ง pre-commit และ commit-msg hooks แล้ว")
         else:
-            self.record("FAIL", "Git hooks installed", "รัน pre-commit install && pre-commit install --hook-type commit-msg")
+            self.record("FAIL", "Git hooks installed", "รัน pre-commit install; pre-commit install --hook-type commit-msg")
 
     def check_module_4(self) -> None:
         print("\n=== Module 4: PlatformIO Unit Testing ===")
@@ -237,7 +300,7 @@ class Checker:
             self.record("FAIL", "ci.yml", "ไม่พบ .github/workflows/ci.yml ที่ root")
 
         if not self.gh_ready():
-            self.record("WARN", "GitHub Actions CI run", "ข้ามการเช็กออนไลน์ (ยังไม่ได้ gh auth login หรือไม่มี remote)")
+            self.record("WARN", "GitHub Actions CI run", self.online_skip_reason())
             return
 
         code, out, _ = run_cmd(
@@ -268,7 +331,7 @@ class Checker:
             self.record("FAIL", "Git version tag", "ยังไม่พบ Tag รูปแบบ v*.*.* (เช่น v1.0.0)")
 
         if not self.gh_ready():
-            self.record("WARN", "GitHub Release assets", "ข้ามการเช็กออนไลน์ (ยังไม่ได้ gh auth login หรือไม่มี remote)")
+            self.record("WARN", "GitHub Release assets", self.online_skip_reason())
             return
 
         code, out, _ = run_cmd(["gh", "release", "list", "--limit", "1"], self.repo_root)
@@ -280,7 +343,7 @@ class Checker:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Verify ESP32 Git & CI/CD Workshop exercises")
-    parser.add_argument("--module", type=int, choices=range(1, 7), help="ตรวจเฉพาะ Module ที่ระบุ (1-6)")
+    parser.add_argument("--module", type=int, choices=range(1, 7), help="ตรวจเฉพาะ Module ที่ระบุ (1-6; สำหรับ Lab 00 ใช้ check_env.py)")
     parser.add_argument("--all", action="store_true", help="ตรวจครบทั้ง 6 Modules")
     parser.add_argument("--repo-root", default=".", help="Root ของ Git repository (ค่าเริ่มต้น: .)")
     parser.add_argument("--project-dir", default="workshop", help="โฟลเดอร์โปรเจกต์ PlatformIO (ค่าเริ่มต้น: workshop)")

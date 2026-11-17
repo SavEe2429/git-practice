@@ -111,21 +111,27 @@ def run_and_render(
         timeout=120,
     )
     raw = (p.stdout or "") + (("\n" + p.stderr) if p.stderr else "")
-    lines = [f"$ {cmd_display}"] + [l[:115] for l in raw.strip().splitlines()[:max_lines]]
+    lines = [f"$ {cmd_display}"] + [l[:220] for l in raw.strip().splitlines()[:max_lines]]
     render_html_terminal(browser, title, lines, out_name)
 
 
 def main() -> None:
     pio = str(Path.home() / ".platformio" / "penv" / "Scripts" / "pio.exe")
     local_tmp = str(Path.home() / "AppData" / "Local" / "Temp")
+    args = os.sys.argv[1:]
     with sync_playwright() as pw:
         browser = pw.chromium.launch(channel="msedge")
         try:
-            run_and_render(browser, "Pre-Workshop Check (check_env.py)", "uv run exercises/check_env.py", ["uv", "run", "exercises/check_env.py"], "term-00-check-env.png")
-            run_and_render(browser, "git log --graph --oneline (SavEe2429/git-practice)", "git log --graph --oneline -n 6", ["git", "log", "--graph", "--oneline", "-n", "6"], "term-01-git-log.png")
-            run_and_render(browser, "pre-commit run --all-files", "pre-commit run --all-files", ["pre-commit", "run", "--all-files"], "term-02-pre-commit.png")
-            run_and_render(browser, "PlatformIO Build (esp32doit-devkit-v1)", "pio run -d workshop -e esp32doit-devkit-v1", [pio, "run", "-d", "workshop", "-e", "esp32doit-devkit-v1"], "term-03-pio-build.png", {"TEMP": local_tmp, "TMP": local_tmp})
-            run_and_render(browser, "Workshop Self-Check (verify.py)", "uv run exercises/verify.py --all", ["uv", "run", "exercises/verify.py", "--all"], "term-04-verify.png", max_lines=45)
+            if not args or "env" in args:
+                run_and_render(browser, "Pre-Workshop Check (check_env.py)", "uv run exercises/check_env.py", ["uv", "run", "exercises/check_env.py"], "term-00-check-env.png", {"TEMP": local_tmp, "TMP": local_tmp})
+            if not args or "git" in args:
+                run_and_render(browser, "git log --graph --oneline --decorate (SavEe2429/git-practice)", "git log --graph --oneline --decorate -n 6", ["git", "log", "--graph", "--oneline", "--decorate", "-n", "6"], "term-01-git-log.png")
+            if not args or "precommit" in args:
+                run_and_render(browser, "pre-commit run --all-files", "pre-commit run --all-files", ["pre-commit", "run", "--all-files"], "term-02-pre-commit.png")
+            if not args or "pio" in args:
+                run_and_render(browser, "PlatformIO Build (esp32doit-devkit-v1)", "pio run -d workshop -e esp32doit-devkit-v1", [pio, "run", "-d", "workshop", "-e", "esp32doit-devkit-v1"], "term-03-pio-build.png", {"TEMP": local_tmp, "TMP": local_tmp})
+            if not args or "verify" in args:
+                run_and_render(browser, "Workshop Self-Check (verify.py)", "uv run exercises/verify.py --all", ["uv", "run", "exercises/verify.py", "--all"], "term-04-verify.png", max_lines=45)
         finally:
             browser.close()
 

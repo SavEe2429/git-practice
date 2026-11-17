@@ -32,4 +32,4 @@ body:
   # สำหรับอธิบายอาการที่พบ & ขั้นตอนการทำซ้ำ (Steps to Reproduce)
 
   # TODO (LAB02 - ส่วนที่ 4): เพิ่ม field `checkboxes` (id: checklist)
-  # เพื่อยืนยันว่าได้ทดสอบบน branch develop หรือ release ล่าสุดแล้ว (required: true)
+  # เพื่อยืนยันว่าได้ทดสอบบน branch main หรือ release ล่าสุดแล้ว (required: true)

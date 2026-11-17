@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Generate 6 editable Microsoft Word (.docx) Lab Sheets into docs/labs/
-matching LAB01..LAB06.pdf, with student info header, copy-paste ready
+Generate editable Microsoft Word (.docx) Lab Sheets (LAB00..LAB06) into docs/labs/
+matching LAB00..LAB06.pdf, with student info header, copy-paste ready
 code boxes, editable answer/screenshot paste boxes, and reference images.
 """
 
@@ -20,7 +20,37 @@ from docx.shared import Inches, Pt, RGBColor
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from generate_labs import DOCS_DIR, LABS, LABS_DIR  # noqa: E402
 
-TOKEN_RE = re.compile(r"(<code>.*?</code>|<strong>.*?</strong>)", re.DOTALL)
+STRONG_RE = re.compile(r"(<strong>.*?</strong>)", re.DOTALL)
+CODE_RE = re.compile(r"(<code>.*?</code>)", re.DOTALL)
+
+
+def _emit_code_aware(paragraph, fragment: str, base_size: float, color, bold: bool) -> None:
+    for sub in CODE_RE.split(fragment):
+        if not sub:
+            continue
+        if sub.startswith("<code>") and sub.endswith("</code>"):
+            run = paragraph.add_run(html.unescape(sub[6:-7]))
+            run.bold = bold
+            run.font.name = "Consolas"
+            run.font.size = Pt(base_size - 1.0)
+            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+        else:
+            run = paragraph.add_run(html.unescape(sub))
+            run.bold = bold
+            run.font.name = "Leelawadee UI"
+            run.font.size = Pt(base_size)
+            run.font.color.rgb = color
+
+
+def add_rich_runs(paragraph, html_text: str, base_size: float = 10.5, base_color=None) -> None:
+    color = base_color or RGBColor(0x00, 0x00, 0x00)
+    for part in STRONG_RE.split(html_text):
+        if not part:
+            continue
+        if part.startswith("<strong>") and part.endswith("</strong>"):
+            _emit_code_aware(paragraph, part[8:-9], base_size, color, bold=True)
+        else:
+            _emit_code_aware(paragraph, part, base_size, color, bold=False)
 
 
 def set_cell_shading(cell, fill_hex: str) -> None:
@@ -58,33 +88,6 @@ def set_row_min_height(row, height_twips: int) -> None:
     trHeight.set(qn("w:val"), str(height_twips))
     trHeight.set(qn("w:hRule"), "atLeast")
     trPr.append(trHeight)
-
-
-def add_rich_runs(paragraph, html_text: str, base_size: float = 10.5, base_color=None) -> None:
-    color = base_color or RGBColor(0x00, 0x00, 0x00)
-    parts = TOKEN_RE.split(html_text)
-    for part in parts:
-        if not part:
-            continue
-        if part.startswith("<code>") and part.endswith("</code>"):
-            text = html.unescape(part[6:-7])
-            run = paragraph.add_run(text)
-            run.font.name = "Consolas"
-            run.font.size = Pt(base_size - 1.0)
-            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
-        elif part.startswith("<strong>") and part.endswith("</strong>"):
-            text = html.unescape(part[8:-9])
-            run = paragraph.add_run(text)
-            run.bold = True
-            run.font.name = "Leelawadee UI"
-            run.font.size = Pt(base_size)
-            run.font.color.rgb = color
-        else:
-            text = html.unescape(part)
-            run = paragraph.add_run(text)
-            run.font.name = "Leelawadee UI"
-            run.font.size = Pt(base_size)
-            run.font.color.rgb = color
 
 
 def add_section_heading(doc: Document, text: str) -> None:
@@ -266,7 +269,7 @@ def build_docx(lab: dict) -> Path:
         p.paragraph_format.space_before = Pt(5)
         p.paragraph_format.space_after = Pt(2)
         p.paragraph_format.keep_with_next = True
-        r = p.add_run(heading)
+        r = p.add_run(html.unescape(heading))
         r.bold = True
         r.font.name = "Leelawadee UI"
         r.font.size = Pt(10)

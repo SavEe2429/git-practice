@@ -2,7 +2,7 @@
 # Skeleton สำหรับ LAB03: Pre-commit Hooks (จัดรูปแบบโค้ด & ตรวจ Commit Message)
 # คู่มืออ้างอิง : docs/labs/LAB03-Pre_commit_Hooks.pdf
 # ไฟล์เฉลย     : exercises/solutions/.pre-commit-config.yaml
-# คำสั่งติดตั้ง : pre-commit install && pre-commit install --hook-type commit-msg
+# คำสั่งติดตั้ง : pre-commit install; pre-commit install --hook-type commit-msg
 # ==============================================================================
 
 repos: []
