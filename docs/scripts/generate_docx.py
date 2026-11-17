@@ -251,18 +251,52 @@ def build_docx(lab: dict) -> Path:
         r.font.size = Pt(10.5)
         add_rich_runs(p, desc)
 
-    # 5. Copy-Paste Ready Details
-    add_section_heading(doc, "5. รายละเอียดการทดลองและโค้ดฉบับเต็ม (Copy-Paste Ready)")
-    for heading, code in lab["details"]:
+    # 5. Step-by-Step Details (Split Code Parts + Inline How-to Screenshots)
+    add_section_heading(doc, "5. รายละเอียดการทดลองและขั้นตอนปฏิบัติ (Step-by-Step Guide & Code)")
+    for item in lab["details"]:
+        if isinstance(item, dict):
+            heading = item["heading"]
+            desc = item.get("desc", "")
+            code = item.get("code", "")
+            imgs = item.get("images", [])
+        else:
+            heading, code = item
+            desc, imgs = "", []
         p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(4)
+        p.paragraph_format.space_before = Pt(5)
         p.paragraph_format.space_after = Pt(2)
         p.paragraph_format.keep_with_next = True
         r = p.add_run(heading)
         r.bold = True
         r.font.name = "Leelawadee UI"
         r.font.size = Pt(10)
-        add_code_box(doc, code, dark=False)
+        if desc:
+            p_desc = doc.add_paragraph()
+            p_desc.paragraph_format.left_indent = Inches(0.15)
+            p_desc.paragraph_format.space_before = Pt(0)
+            p_desc.paragraph_format.space_after = Pt(3)
+            p_desc.paragraph_format.keep_with_next = True
+            add_rich_runs(p_desc, desc, base_size=9.5, base_color=RGBColor(0x33, 0x41, 0x55))
+        if code:
+            add_code_box(doc, code, dark=False)
+        for rel_src, cap in imgs:
+            img_path = (DOCS_DIR / "labs_html" / rel_src).resolve()
+            if img_path.exists():
+                p_img = doc.add_paragraph()
+                p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p_img.paragraph_format.space_before = Pt(3)
+                p_img.paragraph_format.space_after = Pt(2)
+                p_img.paragraph_format.keep_with_next = True
+                p_img.add_run().add_picture(str(img_path), width=Inches(6.4))
+
+                p_cap = doc.add_paragraph()
+                p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p_cap.paragraph_format.space_after = Pt(6)
+                rc = p_cap.add_run(cap)
+                rc.italic = True
+                rc.font.name = "Leelawadee UI"
+                rc.font.size = Pt(9)
+                rc.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
 
     # 6. Expected Output
     add_section_heading(doc, "6. ตัวอย่างผลลัพธ์ใน Terminal (Expected Output)")

@@ -7,8 +7,10 @@
 ---
 
 ## วิธีเตรียมเครื่องและใช้งาน `verify.py` (ใช้ `uv`)
+> **ก่อนเริ่ม Module 1:** ทำตามใบงาน **LAB 00 (Environment Setup)** ให้เรียบร้อยเพื่อลง `git`, `uv`, `pre-commit`, `platformio`, `esptool`, `gh`, `gcc` และพรีโหลดแพ็กเกจ ESP32 ครบในที่เดียว จากนั้นเช็กความพร้อมด้วยคำสั่งด้านล่าง:
+
 ```bash
-# 0. เช็กความพร้อมเครื่องก่อนเริ่ม (แนะนำทำล่วงหน้า)
+# 0. เช็กความพร้อมเครื่องก่อนเริ่ม (รายละเอียดการติดตั้งทั้งหมดอยู่ใน LAB 00)
 uv run exercises/check_env.py
 
 # 1. ตรวจเฉพาะ Module 1
@@ -108,9 +110,8 @@ uv run exercises/verify.py --all
   3. แตก branch `release/v1.0.0` จาก `main` → `git push -u origin release/v1.0.0` เพื่อให้ `ci.yml` รันตรวจผ่านสีเขียว
   4. เปิด PR เข้า `main` → กด **Rebase and merge** และลบ `release/v1.0.0` ทิ้ง (`main` ยังคงเป็นเส้นตรงเส้นเดียว)
   5. ติด Tag บน `main`: `git checkout main && git pull && git tag -a v1.0.0 -m "release: v1.0.0" && git push origin v1.0.0`
-  6. *(ถ้ามีบอร์ดจริง)* ดาวน์โหลด `esp32doit-v1.0.0-merged-firmware.bin` จากหน้า Releases แล้ว Flash ลงบอร์ดด้วย `esptool`:
+  6. *(ถ้ามีบอร์ดจริง)* ดาวน์โหลด `esp32doit-v1.0.0-merged-firmware.bin` จากหน้า Releases แล้ว Flash ลงบอร์ดด้วย `esptool` (ติดตั้งไว้แล้วใน LAB 00):
      ```bash
-     uv tool install esptool
      esptool --chip esp32 --port COM3 --baud 460800 write-flash 0x0 esp32doit-v1.0.0-merged-firmware.bin
      ```
      *(หรือเปิดเว็บ [ESP Tool](https://espressif.github.io/esptool-js/) บน Chrome/Edge เสียบสาย USB แล้วเลือกไฟล์ที่ Address `0x0` ได้ทันทีโดยไม่ต้องลงโปรแกรม)*

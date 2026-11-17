@@ -2,6 +2,7 @@
 
 ออกแบบตามรูปแบบใบงานปฏิบัติการวิศวกรรม (พร้อมวัตถุประสงค์, ขั้นตอน, โค้ดฉบับเต็มพร้อมก๊อปวาง, ตัวอย่างผลลัพธ์, ช่องบันทึกผล/วางภาพหน้าจอส่งงานใน Word, คำถามท้ายบท, แบบฝึกหัด และภาพหน้าจอจริง):
 
+0. **Lab 00 — Environment Setup & Toolchain Preparation (เตรียมเครื่องครบทุก Lab)**: [PDF](./labs/LAB00-Environment_Setup.pdf) | [Word (.docx)](./labs/LAB00-Environment_Setup.docx)
 1. **Lab 01 — Linear Git (Rebase), Fork Workflow & Conventional Commits**: [PDF](./labs/LAB01-Linear_Git_Rebase.pdf) | [Word (.docx)](./labs/LAB01-Linear_Git_Rebase.docx)
 2. **Lab 02 — YAML Issue Forms, Pull Request (Rebase) & Branch Protection**: [PDF](./labs/LAB02-Issue_Forms_PR_Protection.pdf) | [Word (.docx)](./labs/LAB02-Issue_Forms_PR_Protection.docx)
 3. **Lab 03 — Pre-commit Hooks (`clang-format`, `conventional-pre-commit`)**: [PDF](./labs/LAB03-Pre_commit_Hooks.pdf) | [Word (.docx)](./labs/LAB03-Pre_commit_Hooks.docx)

@@ -3,7 +3,7 @@
 ## 1. การเตรียม Repository หลักก่อนวันเรียน (Option A: Single Public Repo + Fork)
 1. สร้าง **Public Repository** บน GitHub (เช่น `esp32-git-cicd-workshop`) เพื่อให้ผู้เรียนทุกคนได้ **GitHub Actions ฟรีไม่จำกัดนาที**
 2. Push โฟลเดอร์ทั้งหมด (`workshop/`, `docs/`, `exercises/`, `videos/`, `.gitignore`, `README.md`) ขึ้นเป็น branch `main`
-3. แจ้งผู้เรียน **20+ คน** ให้รัน `python exercises/check_env.py` ล่วงหน้า 1 วันก่อนเข้าคลาส
+3. แจ้งผู้เรียน **20+ คน** ให้ทำตาม **[Lab 00 (Environment Setup)](./labs/LAB00-Environment_Setup.pdf)** ล่วงหน้า 1 วันก่อนเข้าคลาส เพื่อติดตั้ง Git, `uv`, `pre-commit`, `platformio`, `esptool`, VS Code Extensions, WinLibs `gcc` และพรีโหลด ESP32 package ให้ผ่าน `uv run exercises/check_env.py` ครบทั้งหมด (ลดปัญหาเน็ตห้องแล็บช้าและไม่ต้องติดตั้งแยกกลาง Lab 01–06)
 4. เน้นย้ำรูปแบบ Branching ของ Workshop: **`main` เป็นเส้นตรงด้วย Rebase** และแยก branch เฉพาะตอนเตรียม **`release/v*`** เท่านั้น (ไม่มี `develop`)
 
 ---

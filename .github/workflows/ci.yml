@@ -1,39 +1,94 @@
-# ==============================================================================
-# Skeleton สำหรับ LAB05: GitHub Actions CI Pipeline
-# คู่มืออ้างอิง : docs/labs/LAB05-GitHub_Actions_CI_YAML.pdf
-# ไฟล์เฉลย     : exercises/solutions/.github/workflows/ci.yml
-# ==============================================================================
-
 name: CI - Lint, Test & Build
 
-# TODO (LAB05 - ขั้นตอนที่ 1): กำหนด Trigger ให้ Workflow ทำงานอัตโนมัติ
-# - เมื่อมีการ push ไปยัง branch `main` และ `release/**`
-# - เมื่อมีการเปิด/อัปเดต pull_request ไปยัง branch `main`
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
 
-# TODO (LAB05 - ขั้นตอนที่ 2): ตั้งค่า defaults.run.working-directory เป็น `workshop`
-# เพื่อให้คำสั่ง run ทั้งหมดรันจากโฟลเดอร์โปรเจกต์ PlatformIO โดยอัตโนมัติ
+defaults:
+  run:
+    working-directory: workshop
 
 jobs:
-  # TODO (LAB05 - ขั้นตอนที่ 3): สร้าง Job `lint` (Code Format & Lint Check)
-  # - runs-on: ubuntu-latest
-  # - ใช้ actions/checkout@v7, astral-sh/setup-uv@v10.3.3 (python-version: '3.12')
-  # - รัน pre-commit/action@v3.0.1 เพื่อตรวจ C/C++ formatting และ YAML
-
-  # TODO (LAB05 - ขั้นตอนที่ 4): สร้าง Job `unit-test` (Native Unit Tests)
-  # - ตั้งค่า `needs: lint` เพื่อรอให้ lint ผ่านก่อน
-  # - Cache ~/.platformio/.cache ด้วย actions/cache@v6 (key อ้างอิง workshop/platformio.ini)
-  # - ติดตั้ง PlatformIO ด้วย `uv tool install platformio` และรัน `pio test -e native -v`
-
-  # TODO (LAB05 - ขั้นตอนที่ 5): สร้าง Job `build-esp32` (Build Firmware)
-  # - ตั้งค่า `needs: unit-test`
-  # - Cache ~/.platformio และติดตั้ง PlatformIO ด้วย uv
-  # - รัน `pio run -e esp32doit-devkit-v1`
-  # - อัปโหลด artifact (`rc-firmware-${{ github.sha }}`) เฉพาะ branch `release/**`
-  starter-placeholder:
-    name: Starter Placeholder (Complete LAB05)
+  lint:
+    name: Code Format & Lint Check
     runs-on: ubuntu-latest
     steps:
-      - name: Print LAB05 TODO
-        run: echo "TODO - Complete .github/workflows/ci.yml following docs/labs/LAB05-GitHub_Actions_CI_YAML.pdf"
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.12'
+          enable-cache: false
+
+      - name: Run pre-commit checks
+        uses: pre-commit/action@v3.0.1
+
+  unit-test:
+    name: Native Unit Tests (Unity)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.12'
+          enable-cache: false
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v6
+        with:
+          path: ~/.platformio/.cache
+          key: ${{ runner.os }}-pio-native-${{ hashFiles('workshop/platformio.ini') }}
+
+      - name: Install PlatformIO with uv
+        run: uv tool install platformio
+
+      - name: Run Native Unit Tests
+        run: pio test -e native -v
+
+  build-esp32:
+    name: Build Firmware (esp32doit-devkit-v1)
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: '3.12'
+          enable-cache: false
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v6
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-pio-esp32-${{ hashFiles('workshop/platformio.ini') }}
+
+      - name: Install PlatformIO with uv
+        run: uv tool install platformio
+
+      - name: Build ESP32 Firmware
+        run: pio run -e esp32doit-devkit-v1
+
+      - name: Upload Release Candidate Artifact
+        if: startsWith(github.ref, 'refs/heads/release/')
+        uses: actions/upload-artifact@v7
+        with:
+          name: rc-firmware-${{ github.sha }}
+          path: |
+            workshop/.pio/build/esp32doit-devkit-v1/firmware.bin
+            workshop/.pio/build/esp32doit-devkit-v1/bootloader.bin
+            workshop/.pio/build/esp32doit-devkit-v1/partitions.bin
+          retention-days: 7

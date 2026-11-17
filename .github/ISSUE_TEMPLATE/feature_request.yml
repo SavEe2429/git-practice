@@ -1,27 +1,31 @@
-# ==============================================================================
-# Skeleton สำหรับ LAB02: GitHub Issue Forms (Feature Request)
-# คู่มืออ้างอิง : docs/labs/LAB02-Issue_Forms_PR_Protection.pdf
-# ไฟล์เฉลย     : exercises/solutions/.github/ISSUE_TEMPLATE/feature_request.yml
-# ==============================================================================
-
 name: Feature Request (ขอฟีเจอร์ใหม่)
 description: เสนอฟีเจอร์ใหม่หรือการปรับปรุงสำหรับโปรเจกต์ ESP32
 title: "[Feat]: "
 labels: ["enhancement"]
-
 body:
-  # TODO (LAB02 - ส่วนที่ 1): เพิ่ม field `textarea` (id: problem, required: true)
-  # อธิบายปัญหาหรือความต้องการ (Why)
   - type: textarea
     id: problem
     attributes:
       label: ปัญหาหรือความต้องการ (Why)
       description: อธิบายว่าทำไมถึงต้องมีฟีเจอร์นี้
+      placeholder: เช่น ต้องการปรับความถี่ไฟกระพริบตามค่า Input เพื่อแสดงสถานะการเชื่อมต่อ
     validations:
       required: true
 
-  # TODO (LAB02 - ส่วนที่ 2): เพิ่ม field `textarea` (id: solution, required: true)
-  # ระบุแนวทางที่เสนอ (How) และไฟล์ที่คาดว่าจะแก้ไข เช่น lib/blink_math
+  - type: textarea
+    id: solution
+    attributes:
+      label: แนวทางที่เสนอ (How)
+      description: ระบุฟังก์ชันหรือไฟล์ที่คาดว่าจะเพิ่ม/แก้ไข (เช่น lib/blink_math)
+      placeholder: เพิ่มฟังก์ชันใน lib/blink_math/ และเขียน Unit Test รองรับ
+    validations:
+      required: true
 
-  # TODO (LAB02 - ส่วนที่ 3): เพิ่ม field `dropdown` (id: target_branch)
-  # ตัวเลือก: main (PR + Rebase and merge) และ release/v* (เฉพาะแก้บั๊กก่อนปล่อยเวอร์ชัน)
+  - type: dropdown
+    id: target_branch
+    attributes:
+      label: Branch เป้าหมาย (Linear History + Rebase)
+      options:
+        - main (PR + Rebase and merge)
+        - release/v* (เฉพาะแก้บั๊กก่อนปล่อยเวอร์ชัน)
+      default: 0

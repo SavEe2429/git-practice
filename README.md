@@ -5,7 +5,7 @@
 ## โครงสร้างโฟลเดอร์
 - **[workshop/](workshop/)** — Starter Project สำหรับผู้เรียนลงมือปฏิบัติ (`lib/blink_math`, `src/main.cpp`, `platformio.ini`)
 - **[docs/](docs/)** — ใบงานปฏิบัติการและคู่มือผู้สอน
-  - [docs/README.md](docs/README.md) — สารบัญใบงาน **LAB01–LAB06** (ทั้ง `.pdf` และ `.docx` สำหรับส่งงาน)
+  - [docs/README.md](docs/README.md) — สารบัญใบงาน **LAB00–LAB06** (ทั้ง `.pdf` และ `.docx` สำหรับส่งงาน)
   - [docs/instructor-guide.md](docs/instructor-guide.md) — คู่มือผู้สอนและตารางเวลา Workshop
 - **[presentation/](presentation/)** — สไลด์ประกอบการสอน (`ESP32_Git_CICD_Workshop.pptx`)
 - **[exercises/](exercises/)** — แบบฝึกหัด, เฉลย และระบบตรวจผล
