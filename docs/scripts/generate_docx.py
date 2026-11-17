@@ -123,6 +123,36 @@ def add_code_box(doc: Document, code_text: str, dark: bool = False) -> None:
     spacer.paragraph_format.space_after = Pt(4)
 
 
+def add_picture_block(doc: Document, img_path: Path, caption: str, width_inches: float = 6.4) -> None:
+    """Insert generous two-line blank spacing before and after every screenshot."""
+    for _ in range(2):
+        sp = doc.add_paragraph()
+        sp.paragraph_format.space_before = Pt(0)
+        sp.paragraph_format.space_after = Pt(2)
+
+    p_img = doc.add_paragraph()
+    p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_img.paragraph_format.space_before = Pt(0)
+    p_img.paragraph_format.space_after = Pt(2)
+    p_img.paragraph_format.keep_with_next = True
+    p_img.add_run().add_picture(str(img_path), width=Inches(width_inches))
+
+    p_cap = doc.add_paragraph()
+    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_cap.paragraph_format.space_before = Pt(0)
+    p_cap.paragraph_format.space_after = Pt(2)
+    rc = p_cap.add_run(caption)
+    rc.italic = True
+    rc.font.name = "Leelawadee UI"
+    rc.font.size = Pt(9)
+    rc.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
+
+    for _ in range(2):
+        sp = doc.add_paragraph()
+        sp.paragraph_format.space_before = Pt(0)
+        sp.paragraph_format.space_after = Pt(2)
+
+
 def add_paste_box(doc: Document, placeholder: str, min_height_inches: float = 0.9) -> None:
     tbl = doc.add_table(rows=1, cols=1)
     tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -285,21 +315,7 @@ def build_docx(lab: dict) -> Path:
         for rel_src, cap in imgs:
             img_path = (DOCS_DIR / "labs_html" / rel_src).resolve()
             if img_path.exists():
-                p_img = doc.add_paragraph()
-                p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                p_img.paragraph_format.space_before = Pt(3)
-                p_img.paragraph_format.space_after = Pt(2)
-                p_img.paragraph_format.keep_with_next = True
-                p_img.add_run().add_picture(str(img_path), width=Inches(6.4))
-
-                p_cap = doc.add_paragraph()
-                p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                p_cap.paragraph_format.space_after = Pt(6)
-                rc = p_cap.add_run(cap)
-                rc.italic = True
-                rc.font.name = "Leelawadee UI"
-                rc.font.size = Pt(9)
-                rc.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
+                add_picture_block(doc, img_path, cap, width_inches=6.4)
 
     # 6. Expected Output
     add_section_heading(doc, "6. ตัวอย่างผลลัพธ์ใน Terminal (Expected Output)")
@@ -350,21 +366,7 @@ def build_docx(lab: dict) -> Path:
     for rel_src, cap in lab["screenshots"]:
         img_path = (DOCS_DIR / "labs_html" / rel_src).resolve()
         if img_path.exists():
-            p_img = doc.add_paragraph()
-            p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p_img.paragraph_format.space_before = Pt(4)
-            p_img.paragraph_format.space_after = Pt(2)
-            p_img.paragraph_format.keep_with_next = True
-            p_img.add_run().add_picture(str(img_path), width=Inches(6.5))
-
-            p_cap = doc.add_paragraph()
-            p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p_cap.paragraph_format.space_after = Pt(8)
-            rc = p_cap.add_run(cap)
-            rc.italic = True
-            rc.font.name = "Leelawadee UI"
-            rc.font.size = Pt(9)
-            rc.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
+            add_picture_block(doc, img_path, cap, width_inches=6.5)
 
     out_path = LABS_DIR / f"{lab['slug']}.docx"
     doc.save(out_path)

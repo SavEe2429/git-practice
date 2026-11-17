@@ -1130,8 +1130,8 @@ TEMPLATE = """<!DOCTYPE html>
     .shot-grid {{
       display: grid;
       grid-template-columns: {shot_cols};
-      gap: 12px;
-      margin: 8px 0 8px 12px;
+      gap: 28px;
+      margin: 26px 0 26px 12px;
     }}
     .shot-card {{
       border: 1px solid #cbd5e1;
@@ -1227,7 +1227,7 @@ def build_lab(lab: dict) -> None:
         if code:
             blk += f'<div class="code-box">{html.escape(code)}</div>'
         for src, cap in imgs:
-            blk += f'<div class="shot-card" style="margin:6px 0 10px 12px;"><img src="{src}" alt="{html.escape(cap)}"/><div class="shot-cap">{html.escape(cap)}</div></div>'
+            blk += f'<div class="shot-card" style="margin:26px 0 26px 12px;"><img src="{src}" alt="{html.escape(cap)}"/><div class="shot-cap">{html.escape(cap)}</div></div>'
         detail_blocks.append(blk)
     details_html = "".join(detail_blocks)
     expected_output_html = html.escape(lab["expected_output"])
