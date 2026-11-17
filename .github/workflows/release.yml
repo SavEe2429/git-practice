@@ -1,69 +1,40 @@
+# ==============================================================================
+# Skeleton สำหรับ LAB06: GitHub Actions Release (CD) & Firmware Binary
+# คู่มืออ้างอิง : docs/labs/LAB06-Release_Tag_and_Firmware_Bin.pdf
+# ไฟล์เฉลย     : exercises/solutions/.github/workflows/release.yml
+# ==============================================================================
+
 name: Release Firmware (CD)
 
+# TODO (LAB06 - ขั้นตอนที่ 1): เปลี่ยน Trigger เป็นการ push Git Tag รูปแบบ `v*.*.*`
+# ตัวอย่าง:
+# on:
+#   push:
+#     tags:
+#       - 'v*.*.*'
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  workflow_dispatch:
 
-permissions:
-  contents: write
+# TODO (LAB06 - ขั้นตอนที่ 2): กำหนดสิทธิ์ `permissions: contents: write`
+# เพื่อให้ Workflow สามารถสร้าง GitHub Release และแนบไฟล์ .bin ได้
 
-defaults:
-  run:
-    working-directory: workshop
+# TODO (LAB06 - ขั้นตอนที่ 3): ตั้งค่า defaults.run.working-directory เป็น `workshop`
 
 jobs:
-  release:
-    name: Build & Publish ESP32 Release
+  # TODO (LAB06 - ขั้นตอนที่ 4): สร้าง Job `release` (Build & Publish ESP32 Release)
+  # 1. Checkout repo และติดตั้ง uv + cache ~/.platformio
+  # 2. ติดตั้ง `platformio` และ `esptool` ด้วย `uv tool install`
+  # 3. รัน `pio test -e native` และ `pio run -e esp32doit-devkit-v1`
+  # 4. ใช้ `esptool --chip esp32 merge-bin` รวม:
+  #    - 0x1000  bootloader.bin
+  #    - 0x8000  partitions.bin
+  #    - 0x10000 firmware.bin
+  #    ให้ได้ไฟล์ `dist/esp32doit-${GITHUB_REF_NAME}-merged-firmware.bin`
+  # 5. ใช้ `softprops/action-gh-release@v3` (generate_release_notes: true)
+  #    เพื่อสร้าง Release พร้อมแนบ firmware.bin และ merged-firmware.bin
+  starter-placeholder:
+    name: Starter Placeholder (Complete LAB06)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v10.3.3
-        with:
-          python-version: '3.12'
-          enable-cache: false
-
-      - name: Cache PlatformIO
-        uses: actions/cache@v6
-        with:
-          path: ~/.platformio
-          key: ${{ runner.os }}-pio-esp32-${{ hashFiles('workshop/platformio.ini') }}
-
-      - name: Install PlatformIO & esptool with uv
-        run: |
-          uv tool install platformio
-          uv tool install esptool
-
-      - name: Run Native Unit Tests before Release
-        run: pio test -e native
-
-      - name: Build ESP32 Firmware
-        run: pio run -e esp32doit-devkit-v1
-
-      - name: Prepare Release Binaries
-        shell: bash
-        run: |
-          mkdir -p dist
-          BUILD_DIR=".pio/build/esp32doit-devkit-v1"
-          cp "${BUILD_DIR}/firmware.bin" "dist/esp32doit-${GITHUB_REF_NAME}-firmware.bin"
-
-          # Merge bootloader, partitions, and firmware into a single flashable binary (at 0x0)
-          esptool --chip esp32 merge-bin \
-            -o "dist/esp32doit-${GITHUB_REF_NAME}-merged-firmware.bin" \
-            --flash-mode dio \
-            --flash-freq 40m \
-            --flash-size 4MB \
-            0x1000 "${BUILD_DIR}/bootloader.bin" \
-            0x8000 "${BUILD_DIR}/partitions.bin" \
-            0x10000 "${BUILD_DIR}/firmware.bin"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          generate_release_notes: true
-          files: |
-            workshop/dist/esp32doit-${{ github.ref_name }}-firmware.bin
-            workshop/dist/esp32doit-${{ github.ref_name }}-merged-firmware.bin
+      - name: Print LAB06 TODO
+        run: echo "TODO - Complete .github/workflows/release.yml following docs/labs/LAB06-Release_Tag_and_Firmware_Bin.pdf"

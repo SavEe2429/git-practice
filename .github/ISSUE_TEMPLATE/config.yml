@@ -1,5 +1,15 @@
+# ==============================================================================
+# Skeleton สำหรับ LAB02: ตั้งค่าหน้าเลือก Issue Template (Issue Chooser)
+# คู่มืออ้างอิง : docs/labs/LAB02-Issue_Forms_PR_Protection.pdf
+# ไฟล์เฉลย     : exercises/solutions/.github/ISSUE_TEMPLATE/config.yml
+# ==============================================================================
+
+# ปิดการสร้าง Issue แบบหน้าว่าง เพื่อบังคับให้ใช้ Issue Forms (.yml)
 blank_issues_enabled: false
-contact_links:
-  - name: คู่มือ Workshop (Docs)
-    url: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
-    about: เอกสารอ้างอิงไวยากรณ์ YAML สำหรับ GitHub Issue Forms
+
+# TODO (LAB02): เพิ่ม `contact_links` สำหรับลิงก์ไปยังคู่มือ Workshop (Docs)
+# ตัวอย่าง:
+# contact_links:
+#   - name: คู่มือ Workshop (Docs)
+#     url: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+#     about: เอกสารอ้างอิงไวยากรณ์ YAML สำหรับ GitHub Issue Forms

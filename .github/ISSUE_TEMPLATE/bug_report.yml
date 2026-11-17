@@ -1,48 +1,35 @@
+# ==============================================================================
+# Skeleton สำหรับ LAB02: GitHub Issue Forms (Bug Report)
+# คู่มืออ้างอิง : docs/labs/LAB02-Issue_Forms_PR_Protection.pdf
+# ไฟล์เฉลย     : exercises/solutions/.github/ISSUE_TEMPLATE/bug_report.yml
+# ==============================================================================
+
 name: Bug Report (แจ้งบั๊ก Firmware)
 description: รายงานปัญหาที่พบในโปรเจกต์ ESP32 DOIT DevKit v1
 title: "[Bug]: "
 labels: ["bug", "triage"]
+
 body:
   - type: markdown
     attributes:
       value: |
         กรุณากรอกข้อมูลให้ครบถ้วนเพื่อให้ทีมจำลองปัญหาและแก้ไขได้เร็วขึ้นครับ
 
+  # TODO (LAB02 - ส่วนที่ 1): เพิ่ม field `input` (id: version, required: true)
+  # สำหรับให้ผู้แจ้งระบุเวอร์ชันเฟิร์มแวร์ / Tag (เช่น v1.0.0) หรือเลข Commit
   - type: input
     id: version
     attributes:
       label: เวอร์ชันเฟิร์มแวร์ / Tag หรือ Commit
-      description: ระบุ Tag (เช่น v1.0.0) หรือเลข Commit ที่พบปัญหา
       placeholder: v1.0.0
     validations:
       required: true
 
-  - type: dropdown
-    id: environment
-    attributes:
-      label: สภาพแวดล้อมที่พบปัญหา
-      options:
-        - DOIT ESP32 DevKit v1 (Hardware จริง)
-        - PlatformIO Native Test ([env:native])
-        - GitHub Actions CI
-    validations:
-      required: true
+  # TODO (LAB02 - ส่วนที่ 2): เพิ่ม field `dropdown` (id: environment, required: true)
+  # ตัวเลือก: DOIT ESP32 DevKit v1 (Hardware จริง), PlatformIO Native Test ([env:native]), GitHub Actions CI
 
-  - type: textarea
-    id: description
-    attributes:
-      label: อาการที่พบ & ขั้นตอนการทำซ้ำ (Steps to Reproduce)
-      placeholder: |
-        1. รันคำสั่ง...
-        2. ผลลัพธ์ที่เกิดขึ้น...
-        3. ผลลัพธ์ที่คาดหวัง...
-    validations:
-      required: true
+  # TODO (LAB02 - ส่วนที่ 3): เพิ่ม field `textarea` (id: description, required: true)
+  # สำหรับอธิบายอาการที่พบ & ขั้นตอนการทำซ้ำ (Steps to Reproduce)
 
-  - type: checkboxes
-    id: checklist
-    attributes:
-      label: ยืนยันเบื้องต้น
-      options:
-        - label: ทดสอบบน branch main หรือ release ล่าสุดแล้ว
-          required: true
+  # TODO (LAB02 - ส่วนที่ 4): เพิ่ม field `checkboxes` (id: checklist)
+  # เพื่อยืนยันว่าได้ทดสอบบน branch develop หรือ release ล่าสุดแล้ว (required: true)
