@@ -185,9 +185,9 @@ DIAGRAMS["s05"] = (476, 296, "Three-Layer Quality Gate Architecture", wrap(
     """  <line x1="238" y1="96"  x2="238" y2="114" stroke="#64748B" stroke-width="2" marker-end="url(#arr)"/>
   <line x1="238" y1="186" x2="238" y2="204" stroke="#1F5F8B" stroke-width="2" marker-end="url(#arr-navy)"/>
 """ +
-    node(28, 24, 420, 72, "Layer 1: Local Gate", "Pre-commit Format + Commit Rule (< 3s)", t_sz=16, s_sz=12.5) +
-    node(58, 114, 360, 72, "Layer 2: Cloud CI Gate", "Unity Native Test + ESP32 Build (~2m)", focal=True, t_sz=16, s_sz=12.5) +
-    node(88, 204, 300, 72, "Layer 3: Release Gate", "Tag v* -> merge-bin (0x0)", focal=True, t_sz=16, s_sz=12.5)
+    node(32, 24, 412, 72, "Layer 1: Local Gate", "Pre-commit Format + Commit Rule (< 3s)", t_sz=16, s_sz=12.5) +
+    node(32, 114, 412, 72, "Layer 2: Cloud CI Gate", "Unity Native Test + ESP32 Build (~2m)", focal=True, t_sz=16, s_sz=12.5) +
+    node(32, 204, 412, 72, "Layer 3: Release Gate", "Tag v* -> merge-bin (0x0)", focal=True, t_sz=16, s_sz=12.5)
 ))
 
 # ==============================================================================
@@ -214,6 +214,90 @@ DIAGRAMS["s06"] = (872, 252, "Shared Repo Parallel Feature Branches", wrap(
   <path d="M 216,70 Q 216,202 284,202 H 724 Q 776,202 776,75" fill="none" stroke="#64748B" stroke-width="2.2" marker-end="url(#arr)"/>
   <rect x="468" y="182" width="204" height="36" rx="18" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.5"/>
   <text x="570" y="205" fill="#334155" font-size="14" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">Dev B: fix/watchdog</text>
+"""
+))
+
+# s06_why (Type A — 872x252): Why Branching Is Needed When Working Together
+DIAGRAMS["s06_why"] = (872, 252, "Why Branching Is Needed in Team Development", wrap(
+    "s06_why", 872, 252,
+    "Team Editing Same Codebase Without Branches vs With Branches",
+    "Left shows 3 developers editing main directly without branches causing overwritten files and lost history; Right shows why Branching & Git History are needed.",
+    """  <line x1="426" y1="126" x2="446" y2="126" stroke="#1F5F8B" stroke-width="2.4" marker-end="url(#arr-navy)"/>
+  <!-- Left: Problem -->
+  <rect x="24" y="20" width="400" height="212" rx="10" fill="#FFFFFF" stroke="#FCA5A5" stroke-width="1.5"/>
+  <rect x="24" y="20" width="400" height="34" rx="10" fill="#FEF2F2"/>
+  <text x="42" y="42" fill="#991B1B" font-size="13" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif">ปัญหาจริง: ทุกคนแก้บน main / ส่งไฟล์ทับกัน</text>
+  <rect x="42" y="68" width="112" height="44" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="98" y="95" fill="#0F172A" font-size="13" font-weight="700" text-anchor="middle">Dev A</text>
+  <rect x="168" y="68" width="112" height="44" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="224" y="95" fill="#0F172A" font-size="13" font-weight="700" text-anchor="middle">Dev B</text>
+  <rect x="294" y="68" width="112" height="44" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="350" y="95" fill="#0F172A" font-size="13" font-weight="700" text-anchor="middle">Dev C</text>
+  <line x1="98"  y1="112" x2="196" y2="152" stroke="#991B1B" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="224" y1="112" x2="224" y2="152" stroke="#991B1B" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="350" y1="112" x2="252" y2="152" stroke="#991B1B" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="42" y="156" width="364" height="58" rx="8" fill="#FEF2F2" stroke="#FCA5A5"/>
+  <text x="224" y="180" fill="#991B1B" font-size="13.5" font-weight="700" text-anchor="middle">แก้พร้อมกันบน main เดียว -> โค้ดชนกันพัง</text>
+  <text x="224" y="200" fill="#64748B" font-size="12" text-anchor="middle">ไม่รู้ว่าใครแก้ตรงไหน และย้อนกลับเวอร์ชันเดิมไม่ได้</text>
+
+  <!-- Right: Goal -->
+  <rect x="448" y="20" width="400" height="212" rx="10" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.8"/>
+  <rect x="448" y="20" width="400" height="34" rx="10" fill="#1F5F8B"/>
+  <text x="466" y="42" fill="#FFFFFF" font-size="13" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif">ทางออก: ระบบ Branch &amp; Linear History</text>
+  <rect x="466" y="72" width="364" height="44" rx="8" fill="#FFFFFF" stroke="#1F5F8B"/>
+  <text x="648" y="99" fill="#12306E" font-size="13.5" font-weight="700" text-anchor="middle">1. แยกพื้นที่ทำงานคนละ Branch ไม่กวน main</text>
+  <rect x="466" y="126" width="364" height="44" rx="8" fill="#FFFFFF" stroke="#1F5F8B"/>
+  <text x="648" y="153" fill="#12306E" font-size="13.5" font-weight="700" text-anchor="middle">2. รู้กติกา Auto-Merge vs Merge Conflict</text>
+  <rect x="466" y="180" width="364" height="36" rx="8" fill="#FFFFFF" stroke="#12306E"/>
+  <text x="648" y="203" fill="#1F5F8B" font-size="13" font-weight="700" text-anchor="middle">3. รวมงานเป็นเส้นตรง ไล่ประวัติย้อนหลังได้</text>
+"""
+))
+
+# s06b_ok (Type A — 872x252): Timeline Diagram - Different Files Auto-Merge OK
+DIAGRAMS["s06b_ok"] = (872, 252, "Commit Timeline: Different Files Auto-Merge", wrap(
+    "s06b_ok", 872, 252,
+    "Git Commit History When Dev A and Dev B Edit Different Files",
+    "Commit timeline showing main branch receiving commits from Dev A (led.cpp) and Dev B (sensor.cpp) that Git auto-merges cleanly.",
+    """  <text x="32" y="64" fill="#12306E" font-size="15" font-weight="700" font-family="'Geist Mono', monospace">main</text>
+  <line x1="112" y1="60" x2="824" y2="60" stroke="#12306E" stroke-width="3" marker-end="url(#arr-navy)"/>
+  <circle cx="172" cy="60" r="8" fill="#FFFFFF" stroke="#12306E" stroke-width="2.5"/>
+  <circle cx="468" cy="60" r="9" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="2.5"/>
+  <circle cx="724" cy="60" r="9" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="2.5"/>
+  <text x="172" y="36" fill="#64748B" font-size="12.5" font-weight="700" text-anchor="middle">Base Commit</text>
+  <text x="468" y="36" fill="#1F5F8B" font-size="12.5" font-weight="700" text-anchor="middle">Auto-Merge OK</text>
+  <text x="724" y="36" fill="#1F5F8B" font-size="12.5" font-weight="700" text-anchor="middle">CLEAN (ไม่พัง)</text>
+
+  <path d="M 172,68 Q 172,130 224,130 H 416 Q 468,130 468,72" fill="none" stroke="#1F5F8B" stroke-width="2.4" marker-end="url(#arr-navy)"/>
+  <rect x="220" y="110" width="204" height="38" rx="19" fill="#FFFFFF" stroke="#1F5F8B" stroke-width="1.6"/>
+  <text x="322" y="134" fill="#1F5F8B" font-size="13.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">Dev A: + led.cpp</text>
+
+  <path d="M 172,68 Q 172,202 244,202 H 672 Q 724,202 724,72" fill="none" stroke="#64748B" stroke-width="2.2" marker-end="url(#arr)"/>
+  <rect x="368" y="182" width="224" height="38" rx="19" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.5"/>
+  <text x="480" y="206" fill="#334155" font-size="13.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">Dev B: + sensor.cpp</text>
+"""
+))
+
+# s06b_conflict (Type A — 872x252): Timeline Diagram - Same Line Conflict!
+DIAGRAMS["s06b_conflict"] = (872, 252, "Commit Timeline: Same-Line Merge Conflict", wrap(
+    "s06b_conflict", 872, 252,
+    "Git Commit History When Dev A and Dev B Edit Same Line on main",
+    "Commit timeline showing Dev A pushing main.cpp:12 first, and Dev B colliding on main.cpp:12 causing a Merge Conflict.",
+    """  <text x="32" y="64" fill="#12306E" font-size="15" font-weight="700" font-family="'Geist Mono', monospace">main</text>
+  <line x1="112" y1="60" x2="824" y2="60" stroke="#12306E" stroke-width="3"/>
+  <circle cx="172" cy="60" r="8" fill="#FFFFFF" stroke="#12306E" stroke-width="2.5"/>
+  <circle cx="468" cy="60" r="9" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="2.5"/>
+  <circle cx="724" cy="60" r="11" fill="#FEE2E2" stroke="#991B1B" stroke-width="2.8"/>
+  <text x="172" y="36" fill="#64748B" font-size="12.5" font-weight="700" text-anchor="middle">main.cpp:12</text>
+  <text x="468" y="36" fill="#1F5F8B" font-size="12.5" font-weight="700" text-anchor="middle">Dev A Push OK</text>
+  <text x="724" y="36" fill="#991B1B" font-size="13" font-weight="700" text-anchor="middle">CONFLICT! (ชนกัน)</text>
+
+  <path d="M 172,68 Q 172,130 224,130 H 416 Q 468,130 468,72" fill="none" stroke="#1F5F8B" stroke-width="2.4" marker-end="url(#arr-navy)"/>
+  <rect x="200" y="110" width="244" height="38" rx="19" fill="#FFFFFF" stroke="#1F5F8B" stroke-width="1.6"/>
+  <text x="322" y="134" fill="#1F5F8B" font-size="13" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">Dev A: main.cpp (PIN=2)</text>
+
+  <path d="M 172,68 Q 172,202 244,202 H 672 Q 724,202 724,74" fill="none" stroke="#991B1B" stroke-width="2.4" stroke-dasharray="6,3" marker-end="url(#arr)"/>
+  <rect x="348" y="182" width="256" height="38" rx="19" fill="#FEF2F2" stroke="#991B1B" stroke-width="1.6"/>
+  <text x="476" y="206" fill="#991B1B" font-size="13" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">Dev B: main.cpp (PIN=4)</text>
 """
 ))
 
@@ -276,6 +360,34 @@ DIAGRAMS["s09"] = (476, 296, "Rebase and Conflict Resolution Flow", wrap(
     node(32, 204, 412, 68, "3. Push ขึ้น GitHub อย่างปลอดภัย", "git push --force-with-lease", t_sz=15.5, s_sz=12.5)
 ))
 
+# s09b (Type B — 476x296): Real C++ Merge Conflict Code Example
+DIAGRAMS["s09b"] = (476, 296, "Merge Conflict Code Example in main.cpp", wrap(
+    "s09b", 476, 296,
+    "What a Git Merge Conflict Looks Like in C++ Code",
+    "Code snippet of src/main.cpp showing <<<<<<< HEAD, =======, and >>>>>>> markers and the clean resolved line below.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">src/main.cpp  (CONFLICT)</text>
+
+  <!-- Conflict block -->
+  <rect x="16" y="52" width="444" height="148" rx="8" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1.5"/>
+  <rect x="336" y="58" width="116" height="22" rx="11" fill="#991B1B"/>
+  <text x="394" y="73" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">CONFLICT</text>
+  <text x="28" y="76"  fill="#991B1B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD (origin/main)</text>
+  <text x="28" y="100" fill="#0F172A" font-size="12.5" font-family="'Geist Mono', monospace">const int LED_PIN = 2;  // Dev A</text>
+  <text x="28" y="124" fill="#991B1B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">=======</text>
+  <text x="28" y="148" fill="#0F172A" font-size="12.5" font-family="'Geist Mono', monospace">const int LED_PIN = 4;  // Dev B</text>
+  <text x="28" y="172" fill="#991B1B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/blink-update</text>
+
+  <!-- Resolved block -->
+  <rect x="16" y="210" width="444" height="72" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="336" y="216" width="116" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="394" y="231" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">RESOLVED</text>
+  <text x="28" y="236" fill="#12306E" font-size="12.5" font-weight="700" font-family="'Geist Mono', monospace">const int LED_PIN = 4;</text>
+  <text x="28" y="264" fill="#475569" font-size="12" font-family="'Geist Mono', monospace">git add src/main.cpp &amp;&amp; git rebase --continue</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
+))
+
 # s10 (Type B — 476x296): Conventional Commits Anatomy
 DIAGRAMS["s10"] = (476, 296, "Conventional Commits Format Anatomy", wrap(
     "s10", 476, 296,
@@ -293,6 +405,48 @@ DIAGRAMS["s10"] = (476, 296, "Conventional Commits Format Anatomy", wrap(
 # ==============================================================================
 # SECTION 03 (LAB 02): s11, s12, s13, s14
 # ==============================================================================
+# SECTION 03 (LAB 02): s11_why, s11, s12, s13, s14
+# ==============================================================================
+
+# s11_why (Type A — 872x252): Image-First Chat Mockup vs GitHub Issue Board
+DIAGRAMS["s11_why"] = (872, 252, "Chat Mockup vs GitHub Issue Board", wrap(
+    "s11_why", 872, 252,
+    "LINE/Team Chat Messages Buried vs GitHub Issue Board",
+    "Visual comparison: Left shows a team chat window where a bug report gets buried by lunch and meeting messages; Right shows a structured GitHub Issues board.",
+    """  <line x1="426" y1="126" x2="446" y2="126" stroke="#1F5F8B" stroke-width="2.4" marker-end="url(#arr-navy)"/>
+  <!-- Left Window: LINE / Team Chat Mockup -->
+  <rect x="24" y="20" width="400" height="212" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="24" y="20" width="400" height="34" rx="10" fill="#E2E8F0"/>
+  <text x="40" y="42" fill="#334155" font-size="13" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif">LINE · Team Firmware Chat</text>
+  <rect x="40" y="64" width="320" height="36" rx="10" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="52" y="86" fill="#991B1B" font-size="12.5" font-weight="700">Lead: บอร์ด v2 ไฟ LED ไม่ติดตอน boot!</text>
+  <rect x="366" y="71" width="44" height="22" rx="11" fill="#FEE2E2"/>
+  <text x="388" y="86" fill="#991B1B" font-size="10.5" font-weight="700" text-anchor="middle">BUG</text>
+  <rect x="116" y="108" width="292" height="34" rx="10" fill="#F1F5F9"/>
+  <text x="128" y="129" fill="#475569" font-size="12.5">Dev B: เที่ยงนี้กินข้าวร้านไหนดีครับ?</text>
+  <rect x="40" y="148" width="316" height="34" rx="10" fill="#F1F5F9"/>
+  <text x="52" y="169" fill="#475569" font-size="12.5">Dev C: ส่งไฟล์สไลด์ประชุมบ่ายให้แล้วนะ</text>
+  <rect x="40" y="190" width="368" height="28" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-dasharray="4,3"/>
+  <text x="224" y="208" fill="#64748B" font-size="12" font-weight="600" text-anchor="middle">ข้อความแจ้ง Bug ถูกดันจมหาย หาไม่เจอ...</text>
+
+  <!-- Right Window: GitHub Issues Board Mockup -->
+  <rect x="448" y="20" width="400" height="212" rx="10" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.8"/>
+  <rect x="448" y="20" width="400" height="34" rx="10" fill="#1F5F8B"/>
+  <text x="466" y="42" fill="#FFFFFF" font-size="13" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif">GitHub · Issues (Open: 2)</text>
+  <rect x="464" y="66" width="368" height="52" rx="8" fill="#FFFFFF" stroke="#1F5F8B" stroke-width="1.3"/>
+  <text x="478" y="88" fill="#12306E" font-size="13.5" font-weight="700">#1  ไฟ LED ไม่ติดตอน boot (ESP32-v2)</text>
+  <text x="478" y="107" fill="#64748B" font-size="11.5" font-family="'Geist Mono', monospace">Assignee: @DevA · Status: Open</text>
+  <rect x="772" y="75" width="48" height="20" rx="10" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="796" y="89" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">bug</text>
+  <rect x="464" y="128" width="368" height="50" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="478" y="150" fill="#0F172A" font-size="13.5" font-weight="700">#2  เพิ่ม WiFi Auto-Reconnect</text>
+  <text x="478" y="168" fill="#64748B" font-size="11.5" font-family="'Geist Mono', monospace">Assignee: @DevB · Status: Open</text>
+  <rect x="772" y="137" width="48" height="20" rx="10" fill="#F1F5F9" stroke="#CBD5E1"/>
+  <text x="796" y="151" fill="#475569" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">feat</text>
+  <rect x="464" y="188" width="368" height="30" rx="6" fill="#FFFFFF" stroke="#1F5F8B"/>
+  <text x="648" y="207" fill="#12306E" font-size="12" font-weight="700" text-anchor="middle">พื้นที่เฉพาะงาน ค้นหาง่าย ไม่ปนแชททั่วไป</text>
+"""
+))
 
 # s11 (Type A — 872x252): Standardized Issue Form + PR Gate Result Wireframe
 DIAGRAMS["s11"] = (872, 252, "Standardized Issue Form and PR Gate UI", wrap(
@@ -303,7 +457,7 @@ DIAGRAMS["s11"] = (872, 252, "Standardized Issue Form and PR Gate UI", wrap(
   <!-- Left Wireframe: Issue Form -->
   <rect x="28" y="24" width="384" height="204" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
   <rect x="28" y="24" width="384" height="36" rx="10" fill="#EEF5FA"/>
-  <text x="46" y="47" fill="#12306E" font-size="14" font-weight="700" font-family="'Geist Mono', monospace">New Issue · Bug Report Form</text>
+  <text x="46" y="47" fill="#12306E" font-size="14" font-weight="700" font-family="'Geist Mono', monospace">Issue #1 · Bug Report Form</text>
   <text x="46" y="84" fill="#334155" font-size="13.5" font-weight="700">1. รุ่นบอร์ด ESP32 *</text>
   <rect x="46" y="92" width="346" height="28" rx="6" fill="#F8FAFC" stroke="#CBD5E1"/>
   <text x="58" y="111" fill="#12306E" font-size="12.5" font-family="'Geist Mono', monospace">DOIT ESP32 DevKit v1</text>
@@ -314,7 +468,7 @@ DIAGRAMS["s11"] = (872, 252, "Standardized Issue Form and PR Gate UI", wrap(
   <!-- Right Wireframe: Locked PR -->
   <rect x="460" y="24" width="384" height="204" rx="10" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.6"/>
   <rect x="460" y="24" width="384" height="36" rx="10" fill="#1F5F8B"/>
-  <text x="478" y="47" fill="#FFFFFF" font-size="14" font-weight="700" font-family="'Geist Mono', monospace">Pull Request #1 · Closes #2</text>
+  <text x="478" y="47" fill="#FFFFFF" font-size="14" font-weight="700" font-family="'Geist Mono', monospace">Pull Request #2 · Closes #1</text>
   <rect x="478" y="76" width="348" height="38" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
   <text x="494" y="100" fill="#12306E" font-size="13.5" font-weight="700">[x] Checklist ตรวจความเรียบร้อยครบ</text>
   <rect x="478" y="124" width="348" height="38" rx="6" fill="#FFFFFF" stroke="#1F5F8B"/>
@@ -324,17 +478,95 @@ DIAGRAMS["s11"] = (872, 252, "Standardized Issue Form and PR Gate UI", wrap(
 """
 ))
 
-# s12 (Type B — 476x296): Issue Form YAML -> Web Form Flow
-DIAGRAMS["s12"] = (476, 296, "YAML Issue Form Anatomy", wrap(
+# s12 (Type B — 476x296): Issue Form YAML Part 1 (Metadata + body intro)
+DIAGRAMS["s12"] = (476, 296, "Issue Form YAML Part 1: Metadata and Body", wrap(
     "s12", 476, 296,
-    "YAML Issue Form Structure",
-    "Anatomy of .github/ISSUE_TEMPLATE YAML showing top metadata, input types, and required validation.",
-    """  <line x1="238" y1="92"  x2="238" y2="112" stroke="#64748B" stroke-width="2" marker-end="url(#arr)"/>
-  <line x1="238" y1="184" x2="238" y2="204" stroke="#1F5F8B" stroke-width="2" marker-end="url(#arr-navy)"/>
+    "YAML Issue Form Metadata and Body Structure",
+    "Annotated .github/ISSUE_TEMPLATE/bug_report.yml code showing Metadata keys (name, description, title, labels, assignees) and the body array.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">.github/ISSUE_TEMPLATE/bug_report.yml</text>
+
+  <!-- Section 1: Metadata -->
+  <rect x="16" y="52" width="444" height="142" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="344" y="58" width="108" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="398" y="73" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">1. METADATA</text>
+  <text x="28" y="76"  fill="#12306E" font-size="12.5" font-weight="700" font-family="'Geist Mono', monospace">name: Bug Report</text>
+  <text x="28" y="100" fill="#0F172A" font-size="12.5" font-family="'Geist Mono', monospace">description: แจ้งปัญหา Firmware ESP32</text>
+  <text x="28" y="124" fill="#0F172A" font-size="12.5" font-family="'Geist Mono', monospace">title: "[Bug]: "</text>
+  <text x="28" y="148" fill="#0F172A" font-size="12.5" font-family="'Geist Mono', monospace">labels: ["bug", "triage"]</text>
+  <text x="28" y="172" fill="#0F172A" font-size="12.5" font-family="'Geist Mono', monospace">assignees: ["tech-lead"]</text>
+
+  <!-- Section 2: Body -->
+  <rect x="16" y="202" width="444" height="80" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="344" y="208" width="108" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="398" y="223" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">2. BODY</text>
+  <text x="28" y="226" fill="#12306E" font-size="12.5" font-weight="700" font-family="'Geist Mono', monospace">body:</text>
+  <text x="28" y="248" fill="#334155" font-size="12" font-family="'Geist Mono', monospace">  - type: dropdown  # 1. รุ่นบอร์ด ESP32</text>
+  <text x="28" y="270" fill="#334155" font-size="12" font-family="'Geist Mono', monospace">  - type: textarea  # 2. ขั้นตอนการทำซ้ำ &amp; อาการ</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
+))
+
+# s12b (Type B — 476x296): Issue Form YAML Part 2 (Field Types, Validations & config.yml)
+DIAGRAMS["s12b"] = (476, 296, "Issue Form YAML Part 2: Fields, Validations & Config", wrap(
+    "s12b", 476, 296,
+    "YAML Issue Form Field Attributes, Validations, and config.yml",
+    "Annotated YAML matching Slide 14 fields: dropdown for ESP32 board model, textarea for reproduction steps & symptoms, validations: required: true, and blank_issues_enabled: false.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">body: Fields + validations + config.yml</text>
+
+  <!-- Field 1 & 2 matching s11 -->
+  <rect x="16" y="52" width="444" height="128" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="336" y="58" width="116" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="394" y="73" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FIELD + RULE</text>
+  <text x="28" y="74"  fill="#12306E" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">- type: dropdown   # id: board</text>
+  <text x="28" y="94"  fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">  attributes: { label: 1. รุ่นบอร์ด ESP32,</text>
+  <text x="28" y="112" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">                options: [DOIT ESP32 DevKit v1, S3] }</text>
+  <text x="28" y="132" fill="#1F5F8B" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">  validations: { required: true }</text>
+  <text x="28" y="154" fill="#12306E" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">- type: textarea   # id: steps</text>
+  <text x="28" y="172" fill="#334155" font-size="11.5" font-family="'Geist Mono', monospace">  attributes: { label: 2. ขั้นตอนการทำซ้ำ &amp; อาการ }</text>
+
+  <!-- config.yml -->
+  <rect x="16" y="188" width="444" height="94" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="336" y="194" width="116" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="394" y="209" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">config.yml</text>
+  <text x="28" y="214" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace"># .github/ISSUE_TEMPLATE/config.yml</text>
+  <text x="28" y="240" fill="#0F172A" font-size="12.5" font-weight="700" font-family="'Geist Mono', monospace">blank_issues_enabled: false</text>
+  <text x="28" y="264" fill="#475569" font-size="12" font-family="'Sarabun', sans-serif">บังคับให้ทุกคนต้องเลือกใช้ Form มาตรฐานเท่านั้น</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
+))
+
+# s12c_pr (Type A — 872x252): What Is a Pull Request (PR)?
+DIAGRAMS["s12c_pr"] = (872, 252, "What Is a Pull Request (PR) Gate", wrap(
+    "s12c_pr", 872, 252,
+    "Pull Request (PR) Workflow from Feature Branch to main",
+    "Flow showing Developer opening a Pull Request from feature/fix-led to main, triggering Diff review and Cloud CI checks before Merge.",
+    """  <line x1="256" y1="126" x2="294" y2="126" stroke="#64748B" stroke-width="2.2" marker-end="url(#arr)"/>
+  <line x1="592" y1="126" x2="630" y2="126" stroke="#1F5F8B" stroke-width="2.2" marker-end="url(#arr-navy)"/>
 """ +
-    node(32, 24, 412, 68, "1. ส่วนหัวของฟอร์ม (Metadata)", "name: Bug Report  |  labels: [\"bug\"]", t_sz=15.5, s_sz=12.5) +
-    node(32, 114, 412, 68, "2. ช่องรับข้อมูล (body:)", "type: dropdown / input / textarea", t_sz=15.5, s_sz=12.5) +
-    node(32, 204, 412, 68, "3. บังคับกรอก (validations:)", "required: true  (ปิด Blank Issue ใน config.yml)", focal=True, t_sz=15.5, s_sz=12)
+    chip(80, 34, "1. FEATURE BRANCH", 132) +
+    chip(374, 34, "2. PULL REQUEST", 136) +
+    chip(676, 34, "3. LOCKED MAIN", 128) +
+    node(28, 76, 226, 128, "feature/fix-led", "โค้ดที่แก้เสร็จใน Branch แยก", mono_t=True, mono_s=False, t_sz=16.5, s_sz=13) +
+    node(298, 76, 292, 128, "Open Pull Request (#2)", "โชว์ Diff + ให้ Lead Review + รัน CI", focal=True, mono_s=False, t_sz=17, s_sz=13) +
+    node(634, 76, 210, 128, "Merge to main", "รวมโค้ดเข้า main อย่างปลอดภัย", focal=True, mono_t=True, mono_s=False, t_sz=16.5, s_sz=13)
+))
+
+# s12d_pr_how (Type A — 872x252): How to Open & Merge a Pull Request on GitHub
+DIAGRAMS["s12d_pr_how"] = (872, 252, "How to Open and Merge a Pull Request", wrap(
+    "s12d_pr_how", 872, 252,
+    "Three-Step Pull Request Workflow on GitHub",
+    "Step-by-step flow: Push feature branch, Open PR comparing feature to main with Closes #1, and Rebase and merge after green CI.",
+    """  <line x1="274" y1="126" x2="314" y2="126" stroke="#64748B" stroke-width="2.2" marker-end="url(#arr)"/>
+  <line x1="576" y1="126" x2="616" y2="126" stroke="#1F5F8B" stroke-width="2.2" marker-end="url(#arr-navy)"/>
+""" +
+    chip(86, 34, "STEP 1: PUSH", 128) +
+    chip(382, 34, "STEP 2: OPEN PR", 128) +
+    chip(668, 34, "STEP 3: MERGE", 128) +
+    node(28, 76, 244, 128, "git push origin feat", "ส่ง Branch ขึ้น GitHub", mono_t=True, mono_s=False, t_sz=15.5, s_sz=13) +
+    node(318, 76, 256, 128, "base: main <- feat", "กรอก Checklist + Closes #1", mono_t=True, mono_s=False, t_sz=15.5, s_sz=13) +
+    node(620, 76, 224, 128, "Rebase & Merge", "CI เขียว -> ปิด Issue #1", focal=True, mono_s=False, t_sz=16.5, s_sz=13)
 ))
 
 # s13 (Type B — 476x296): PR Template & Closes #Issue Automation
@@ -364,8 +596,66 @@ DIAGRAMS["s14"] = (476, 296, "How Issue Forms and Branch Protection Help Teams",
 ))
 
 # ==============================================================================
-# SECTION 04 (LAB 03): s15, s16, s17, s18
+# SECTION 04 (LAB 03): s15_why1, s15_why2, s15, s18, s16, s17
 # ==============================================================================
+
+# s15_why1 (Type A — 872x252): Before Pre-commit (Single Full-Width Card + Inline Error Badges)
+DIAGRAMS["s15_why1"] = (872, 252, "Before Pre-commit: Inline Format and Commit Errors", wrap(
+    "s15_why1", 872, 252,
+    "Code Without Pre-commit: Inline Format and Commit Failures",
+    "Full-width code and commit card showing unformatted C++ and vague commit message with inline red error badges at the end of each line.",
+    """  <rect x="24" y="18" width="824" height="216" rx="10" fill="#FFFFFF" stroke="#FCA5A5" stroke-width="1.6"/>
+  <rect x="24" y="18" width="824" height="36" rx="10" fill="#991B1B"/>
+  <text x="44" y="41" fill="#FFFFFF" font-size="13.5" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif">BEFORE: ไม่มี Pre-commit (Git ยอมให้ Commit ผ่าน แต่ไปพังบน Cloud CI)</text>
+
+  <!-- Row 1: src/main.cpp -->
+  <rect x="42" y="68" width="788" height="48" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="58" y="97" fill="#334155" font-size="13" font-weight="700" font-family="'Geist Mono', monospace">src/main.cpp :</text>
+  <text x="178" y="97" fill="#991B1B" font-size="13" font-family="'Geist Mono', monospace">void setup(){int x=1;   pinMode(LED,OUTPUT);}</text>
+  <rect x="574" y="78" width="242" height="28" rx="14" fill="#FEE2E2" stroke="#FCA5A5"/>
+  <text x="695" y="96" fill="#991B1B" font-size="12" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif" text-anchor="middle">[X] clang-format ผิด Format</text>
+
+  <!-- Row 2: git commit -->
+  <rect x="42" y="126" width="788" height="48" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="58" y="155" fill="#334155" font-size="13" font-weight="700" font-family="'Geist Mono', monospace">git commit   :</text>
+  <text x="178" y="155" fill="#991B1B" font-size="13" font-family="'Geist Mono', monospace">git commit -m "fix"</text>
+  <rect x="574" y="136" width="242" height="28" rx="14" fill="#FEE2E2" stroke="#FCA5A5"/>
+  <text x="695" y="154" fill="#991B1B" font-size="12" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif" text-anchor="middle">[X] ผิดกติกา Conventional Commit</text>
+
+  <!-- Bottom summary -->
+  <rect x="42" y="184" width="788" height="36" rx="8" fill="#FEF2F2" stroke="#FCA5A5"/>
+  <text x="436" y="207" fill="#991B1B" font-size="13" font-weight="700" text-anchor="middle">ผลลัพธ์: โค้ดหลุดขึ้น GitHub แล้วไปพังบน Cloud CI (เสียเวลารอ 2 นาทีแล้วต้องกลับมาแก้ Commit ใหม่)</text>
+"""
+))
+
+# s15_why2 (Type A — 872x252): After Pre-commit (Single Full-Width Card + Inline Pass Badges)
+DIAGRAMS["s15_why2"] = (872, 252, "After Pre-commit: Inline Auto-Fix and Pass Badges", wrap(
+    "s15_why2", 872, 252,
+    "Code After Pre-commit: Auto-Formatted and Validated Locally",
+    "Full-width code and commit card showing auto-formatted C++ and valid Conventional Commit with inline pass badges at the end of each line.",
+    """  <rect x="24" y="18" width="824" height="216" rx="10" fill="#FFFFFF" stroke="#1F5F8B" stroke-width="1.8"/>
+  <rect x="24" y="18" width="824" height="36" rx="10" fill="#1F5F8B"/>
+  <text x="44" y="41" fill="#FFFFFF" font-size="13.5" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif">AFTER: มี Pre-commit (ตรวจและจัดระเบียบให้ทันทีใน 2 วินาทีก่อน Push)</text>
+
+  <!-- Row 1: src/main.cpp -->
+  <rect x="42" y="68" width="788" height="48" rx="8" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="58" y="97" fill="#12306E" font-size="13" font-weight="700" font-family="'Geist Mono', monospace">src/main.cpp :</text>
+  <text x="178" y="97" fill="#12306E" font-size="13" font-family="'Geist Mono', monospace">void setup() { int x = 1; pinMode(LED, OUTPUT); }</text>
+  <rect x="574" y="78" width="242" height="28" rx="14" fill="#FFFFFF" stroke="#1F5F8B"/>
+  <text x="695" y="96" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif" text-anchor="middle">[PASS] clang-format จัดให้อัตโนมัติ</text>
+
+  <!-- Row 2: git commit -->
+  <rect x="42" y="126" width="788" height="48" rx="8" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="58" y="155" fill="#12306E" font-size="13" font-weight="700" font-family="'Geist Mono', monospace">git commit   :</text>
+  <text x="178" y="155" fill="#12306E" font-size="13" font-family="'Geist Mono', monospace">git commit -m "fix: set LED output pin"</text>
+  <rect x="574" y="136" width="242" height="28" rx="14" fill="#FFFFFF" stroke="#1F5F8B"/>
+  <text x="695" y="154" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', 'Sarabun', sans-serif" text-anchor="middle">[PASS] ผ่านกติกา commit-msg</text>
+
+  <!-- Bottom summary -->
+  <rect x="42" y="184" width="788" height="36" rx="8" fill="#EEF5FA" stroke="#12306E"/>
+  <text x="436" y="207" fill="#12306E" font-size="13" font-weight="700" text-anchor="middle">ผลลัพธ์: ตรวจผ่านครบในเครื่อง (Local Gate) -> Push ขึ้น GitHub แล้ว Cloud CI ผ่านตั้งแต่รอบแรก!</text>
+"""
+))
 
 # s15 (Type A — 872x252): Pre-commit Intercept Flow (Result)
 DIAGRAMS["s15"] = (872, 252, "Pre-commit Local Gate Result", wrap(
@@ -383,17 +673,61 @@ DIAGRAMS["s15"] = (872, 252, "Pre-commit Local Gate Result", wrap(
     node(608, 76, 236, 128, "โค้ดสะอาด 100%", "ไม่ผ่าน=Block / ผ่าน=Commit", focal=True, mono_s=False, t_sz=18, s_sz=13.5)
 ))
 
-# s16 (Type B — 476x296): .clang-format & Two-Stage Hook Architecture
-DIAGRAMS["s16"] = (476, 296, "Two-Stage Pre-commit Hook Architecture", wrap(
+# s16_install (Type B — 476x296): Installing Pre-commit & .clang-format
+DIAGRAMS["s16_install"] = (476, 296, "Installing Pre-commit Hooks and .clang-format", wrap(
+    "s16_install", 476, 296,
+    "CLI Commands to Install Pre-commit and .clang-format Rules",
+    "Annotated CLI commands using uv sync and pre-commit install for both pre-commit and commit-msg stages, plus .clang-format file.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">Terminal · Setup Pre-commit (Lab 03)</text>
+
+  <!-- CLI Install Commands -->
+  <rect x="16" y="52" width="444" height="122" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="340" y="58" width="112" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="396" y="73" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">1. INSTALL</text>
+  <text x="28" y="76"  fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">uv sync</text>
+  <text x="28" y="102" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">uv run pre-commit install</text>
+  <text x="28" y="128" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">uv run pre-commit install --hook-type commit-msg</text>
+  <text x="28" y="156" fill="#475569" font-size="11.5" font-family="'Geist Mono', monospace">uv run pre-commit run --all-files</text>
+
+  <!-- .clang-format -->
+  <rect x="16" y="182" width="444" height="100" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="328" y="188" width="124" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="390" y="203" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">.clang-format</text>
+  <text x="28" y="210" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">BasedOnStyle: Google</text>
+  <text x="28" y="236" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">IndentWidth: 2</text>
+  <text x="28" y="262" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">ColumnLimit: 100</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
+))
+
+# s16 (Type B — 476x296): .pre-commit-config.yaml Annotated Code (2 Stages)
+DIAGRAMS["s16"] = (476, 296, "Two-Stage .pre-commit-config.yaml Code", wrap(
     "s16", 476, 296,
-    ".clang-format and Two-Stage Hook Pipeline",
-    "Top rule file .clang-format feeding Stage 1 pre-commit file hooks and Stage 2 commit-msg hook.",
-    """  <line x1="238" y1="92"  x2="238" y2="112" stroke="#64748B" stroke-width="2" marker-end="url(#arr)"/>
-  <line x1="238" y1="184" x2="238" y2="204" stroke="#1F5F8B" stroke-width="2" marker-end="url(#arr-navy)"/>
-""" +
-    node(32, 24, 412, 68, "กติกากลาง: .clang-format", "BasedOnStyle: Google · IndentWidth: 2", t_sz=15.5, s_sz=12.5) +
-    node(32, 114, 412, 68, "Stage 1 (stage: pre-commit)", "ตรวจไฟล์พื้นฐาน · YAML · จัด Format C++", t_sz=15.5, s_sz=12.5) +
-    node(32, 204, 412, 68, "Stage 2 (stage: commit-msg)", "conventional-pre-commit ตรวจ Conventional Commit", focal=True, t_sz=15.5, s_sz=11.5)
+    "Annotated .pre-commit-config.yaml with pre-commit and commit-msg Stages",
+    "Annotated YAML showing mirrors-clang-format under pre-commit stage and conventional-pre-commit under commit-msg stage.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">.pre-commit-config.yaml</text>
+
+  <!-- Stage 1: pre-commit -->
+  <rect x="16" y="52" width="444" height="122" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="316" y="58" width="136" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="384" y="73" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">STAGE: pre-commit</text>
+  <text x="28" y="74"  fill="#12306E" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">repos:</text>
+  <text x="28" y="96"  fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">  - repo: .../pre-commit-hooks (v6.0.0)</text>
+  <text x="28" y="116" fill="#334155" font-size="11.5" font-family="'Geist Mono', monospace">    hooks: [trailing-whitespace, check-yaml]</text>
+  <text x="28" y="138" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">  - repo: .../mirrors-clang-format (v23.1.5)</text>
+  <text x="28" y="158" fill="#334155" font-size="11.5" font-family="'Geist Mono', monospace">    hooks: [{ id: clang-format }]</text>
+
+  <!-- Stage 2: commit-msg -->
+  <rect x="16" y="182" width="444" height="100" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="316" y="188" width="136" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="384" y="203" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">STAGE: commit-msg</text>
+  <text x="28" y="210" fill="#12306E" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">  - repo: .../conventional-pre-commit</text>
+  <text x="28" y="234" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">    rev: v4.5.0</text>
+  <text x="28" y="258" fill="#1F5F8B" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">    hooks: [{ id: conventional-pre-commit, stages: [commit-msg] }]</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
 ))
 
 # s17 (Type B — 476x296): Where to Find Pre-commit Hooks (pre-commit.com + GitHub Search)
@@ -468,27 +802,63 @@ DIAGRAMS["s20"] = (476, 296, "Hardware-Decoupled Firmware Architecture", wrap(
     node(256, 186, 192, 82, "test/test_main.cpp", "รัน Unity Test บน Host PC", focal=True, mono_t=True, mono_s=False, t_sz=15, s_sz=12.5)
 ))
 
-# s21 (Type B — 476x296): PlatformIO Dual Environments (platformio.ini)
-DIAGRAMS["s21"] = (476, 296, "PlatformIO Dual Environments", wrap(
+# s21 (Type B — 476x296): PlatformIO Dual Environments (platformio.ini Code)
+DIAGRAMS["s21"] = (476, 296, "PlatformIO Dual Environments Code", wrap(
     "s21", 476, 296,
-    "PlatformIO Dual Environments in platformio.ini",
-    "Split diagram showing [env:esp32doit-devkit-v1] for hardware build vs [env:native] for host tests.",
-    node(32, 24, 412, 54, "platformio.ini (กำหนด Dual Environment)", focal=False, mono_s=False, t_sz=15.5) +
-    node(32, 98, 412, 80, "[env:esp32doit-devkit-v1]", "platform = espressif32  |  pio run (Build .bin)", mono_t=True, t_sz=15, s_sz=12) +
-    node(32, 194, 412, 80, "[env:native]", "platform = native · test_build_src = no (pio test)", focal=True, mono_t=True, t_sz=16, s_sz=12)
+    "Annotated platformio.ini with Hardware and Native Environments",
+    "Code snippet of platformio.ini showing [env:esp32doit-devkit-v1] for hardware build and [env:native] with test_build_src = no.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">workshop/platformio.ini</text>
+
+  <!-- Hardware Env -->
+  <rect x="16" y="52" width="444" height="106" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="330" y="58" width="122" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="391" y="73" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">1. HARDWARE</text>
+  <text x="28" y="74"  fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">[env:esp32doit-devkit-v1]</text>
+  <text x="28" y="96"  fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">platform = espressif32</text>
+  <text x="28" y="118" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">framework = arduino</text>
+  <text x="28" y="142" fill="#475569" font-size="11.5" font-family="'Geist Mono', monospace"># รัน Compile .bin ด้วย: pio run</text>
+
+  <!-- Native Env -->
+  <rect x="16" y="166" width="444" height="116" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="330" y="172" width="122" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="391" y="187" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">2. NATIVE TEST</text>
+  <text x="28" y="190" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">[env:native]</text>
+  <text x="28" y="214" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">platform = native</text>
+  <text x="28" y="238" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">test_build_src = no</text>
+  <text x="28" y="264" fill="#475569" font-size="11.5" font-family="'Geist Mono', monospace"># รัน Test บน PC ด้วย: pio test -e native</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
 ))
 
-# s22 (Type B — 476x296): Unity Test Lifecycle
-DIAGRAMS["s22"] = (476, 296, "Unity Test Case Anatomy", wrap(
+# s22 (Type B — 476x296): Unity Test Lifecycle (test/test_main.cpp Code)
+DIAGRAMS["s22"] = (476, 296, "Unity Test Case C++ Code", wrap(
     "s22", 476, 296,
-    "Unity Unit Test Execution Flow",
-    "Sequential Unity test lifecycle: UNITY_BEGIN -> RUN_TEST + TEST_ASSERT_EQUAL -> UNITY_END.",
-    """  <line x1="238" y1="92"  x2="238" y2="112" stroke="#64748B" stroke-width="2" marker-end="url(#arr)"/>
-  <line x1="238" y1="184" x2="238" y2="204" stroke="#1F5F8B" stroke-width="2" marker-end="url(#arr-navy)"/>
-""" +
-    node(32, 24, 412, 68, "1. UNITY_BEGIN()", "เริ่มเปิด Test Suite และตั้งค่าเริ่มต้น", mono_t=True, mono_s=False, t_sz=15.5, s_sz=12.5) +
-    node(32, 114, 412, 68, "2. RUN_TEST(...) + TEST_ASSERT_EQUAL", "เทียบค่าจริงกับ Expected Value (Normal & Boundary)", focal=True, mono_t=True, mono_s=False, t_sz=14, s_sz=11.5) +
-    node(32, 204, 412, 68, "3. UNITY_END()", "สรุปจำนวน Case ผ่าน/ตก พร้อม Exit Code", mono_t=True, mono_s=False, t_sz=15.5, s_sz=12.5)
+    "Annotated test/test_main.cpp Using Unity Assertions",
+    "C++ code snippet showing TEST_ASSERT_EQUAL, UNITY_BEGIN, RUN_TEST, and UNITY_END.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">workshop/test/test_main.cpp</text>
+
+  <!-- Test Function -->
+  <rect x="16" y="52" width="444" height="106" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="336" y="58" width="116" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="394" y="73" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">TEST CASE</text>
+  <text x="28" y="74"  fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">#include &lt;unity.h&gt;</text>
+  <text x="28" y="98"  fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">void test_blink_interval_normal(void) {</text>
+  <text x="28" y="122" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">  TEST_ASSERT_EQUAL(500, calc_delay(1));</text>
+  <text x="28" y="144" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">}</text>
+
+  <!-- main() runner -->
+  <rect x="16" y="166" width="444" height="116" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="336" y="172" width="116" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="394" y="187" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">RUNNER</text>
+  <text x="28" y="190" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">int main(void) {</text>
+  <text x="28" y="214" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">  UNITY_BEGIN();</text>
+  <text x="28" y="238" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">  RUN_TEST(test_blink_interval_normal);</text>
+  <text x="28" y="262" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">  return UNITY_END();</text>
+  <text x="240" y="262" fill="#12306E" font-size="12" font-family="'Geist Mono', monospace">}</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
 ))
 
 # ==============================================================================
@@ -514,17 +884,34 @@ DIAGRAMS["s23"] = (872, 252, "Cloud CI Automated Pipeline Result", wrap(
     node(636, 78, 212, 128, "PR Merge Gate", "เขียว=ผ่าน / แดง=Block", focal=True, mono_s=False, t_sz=18, s_sz=13.5)
 ))
 
-# s24 (Type B — 476x296): Workflow Anatomy (Trigger -> Runner -> Steps)
-DIAGRAMS["s24"] = (476, 296, "CI Workflow Structural Anatomy", wrap(
+# s24 (Type B — 476x296): Workflow Anatomy (.github/workflows/ci.yml Code)
+DIAGRAMS["s24"] = (476, 296, "CI Workflow YAML Code", wrap(
     "s24", 476, 296,
-    "Three Structural Blocks of ci.yml",
-    "Trigger (on:) -> Job & Runner (runs-on:) -> Steps (Checkout -> Setup -> Run).",
-    """  <line x1="238" y1="92"  x2="238" y2="112" stroke="#64748B" stroke-width="2" marker-end="url(#arr)"/>
-  <line x1="238" y1="184" x2="238" y2="204" stroke="#1F5F8B" stroke-width="2" marker-end="url(#arr-navy)"/>
-""" +
-    node(32, 24, 412, 68, "Block 1: Trigger (on:)", "push / pull_request -> Event เริ่มรัน CI", mono_s=False, t_sz=16, s_sz=12.5) +
-    node(32, 114, 412, 68, "Block 2: Job & Runner (runs-on:)", "ubuntu-latest -> ขอ Cloud Linux VM สะอาด", t_sz=16, s_sz=12.5) +
-    node(32, 204, 412, 68, "Block 3: Steps (ลำดับคำสั่ง)", "3.1 Checkout  ->  3.2 Setup  ->  3.3 Run Test", focal=True, t_sz=16, s_sz=12.5)
+    "Annotated .github/workflows/ci.yml Structure",
+    "YAML code showing on: trigger, runs-on: ubuntu-latest, and steps for checkout, setup-uv, and pio test.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">.github/workflows/ci.yml</text>
+
+  <!-- Trigger & Runner -->
+  <rect x="16" y="52" width="444" height="96" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="330" y="58" width="122" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="391" y="73" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">1. ON + VM</text>
+  <text x="28" y="74"  fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">on: [push, pull_request]</text>
+  <text x="28" y="98"  fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">jobs:</text>
+  <text x="28" y="118" fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">  unit-test:</text>
+  <text x="28" y="138" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">    runs-on: ubuntu-latest</text>
+
+  <!-- Steps -->
+  <rect x="16" y="156" width="444" height="126" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="330" y="162" width="122" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="391" y="177" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">2. STEPS</text>
+  <text x="28" y="180" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">    steps:</text>
+  <text x="28" y="204" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">      - uses: actions/checkout@v7</text>
+  <text x="28" y="226" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">      - uses: astral-sh/setup-uv@v10</text>
+  <text x="28" y="248" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">      - uses: actions/cache@v6</text>
+  <text x="28" y="270" fill="#1F5F8B" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">      - run: uv run pio test -e native</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
 ))
 
 # s25 (Type B — 476x296): Where to Find Actions & Version Pinning
@@ -598,17 +985,33 @@ DIAGRAMS["s28"] = (476, 296, "ESP32 Flash Partitions and merge-bin", wrap(
     node(24, 182, 428, 84, "esptool --chip esp32 merge-bin (0x0)", "รวม 3 ไฟล์เป็น Binary เดียว ไม่ต้องจำ Offset ตอน Flash", focal=True, mono_t=True, mono_s=False, t_sz=14.5, s_sz=12.5)
 ))
 
-# s29 (Type B — 476x296): Release Workflow Structure (release.yml)
-DIAGRAMS["s29"] = (476, 296, "Release Workflow Configuration", wrap(
+# s29 (Type B — 476x296): Release Workflow Code (release.yml)
+DIAGRAMS["s29"] = (476, 296, "Release Workflow YAML Code", wrap(
     "s29", 476, 296,
-    "Three Key Elements of release.yml",
-    "Tag trigger v*, contents: write permission, and softprops/action-gh-release.",
-    """  <line x1="238" y1="92"  x2="238" y2="112" stroke="#64748B" stroke-width="2" marker-end="url(#arr)"/>
-  <line x1="238" y1="184" x2="238" y2="204" stroke="#1F5F8B" stroke-width="2" marker-end="url(#arr-navy)"/>
-""" +
-    node(32, 24, 412, 68, "1. Trigger: on: push: tags: ['v*']", "ทำงานเฉพาะตอน Push Tag เวอร์ชัน (เช่น v1.0.0)", t_sz=15, s_sz=12.5) +
-    node(32, 114, 412, 68, "2. Permission: contents: write", "อนุญาตให้ Workflow สร้าง GitHub Release และแนบไฟล์ได้", t_sz=14.5, s_sz=12.5) +
-    node(32, 204, 412, 68, "3. Upload: gh-release@v3", "Upload ทั้งไฟล์ OTA และ Factory Binary อัตโนมัติ", focal=True, t_sz=15, s_sz=12.5)
+    "Annotated .github/workflows/release.yml",
+    "YAML code showing tag v* trigger, contents: write permission, and softprops/action-gh-release.",
+    """  <rect x="16" y="14" width="444" height="30" rx="8" fill="#1F5F8B"/>
+  <text x="28" y="34" fill="#FFFFFF" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">.github/workflows/release.yml</text>
+
+  <!-- Trigger & Permissions -->
+  <rect x="16" y="52" width="444" height="106" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+  <rect x="330" y="58" width="122" height="22" rx="11" fill="#EEF5FA" stroke="#1F5F8B"/>
+  <text x="391" y="73" fill="#1F5F8B" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">TAG + PERMS</text>
+  <text x="28" y="74"  fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">on:</text>
+  <text x="28" y="96"  fill="#0F172A" font-size="12" font-family="'Geist Mono', monospace">  push: { tags: ['v*'] }</text>
+  <text x="28" y="122" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">permissions:</text>
+  <text x="28" y="144" fill="#1F5F8B" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">  contents: write</text>
+
+  <!-- Release Action -->
+  <rect x="16" y="166" width="444" height="116" rx="8" fill="#EEF5FA" stroke="#1F5F8B" stroke-width="1.5"/>
+  <rect x="330" y="172" width="122" height="22" rx="11" fill="#1F5F8B"/>
+  <text x="391" y="187" fill="#FFFFFF" font-size="10.5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">GH RELEASE</text>
+  <text x="28" y="190" fill="#12306E" font-size="12" font-weight="700" font-family="'Geist Mono', monospace">- uses: softprops/action-gh-release@v2</text>
+  <text x="28" y="214" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">  with:</text>
+  <text x="28" y="236" fill="#0F172A" font-size="11.5" font-family="'Geist Mono', monospace">    generate_release_notes: true</text>
+  <text x="28" y="260" fill="#1F5F8B" font-size="11.5" font-weight="700" font-family="'Geist Mono', monospace">    files: dist/*.bin  # OTA + merged-bin</text>
+""",
+    bg="#FFFFFF", border="#CBD5E1"
 ))
 
 # s30 (Type B — 476x296): Automated Student Verification Scripts
