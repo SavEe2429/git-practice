@@ -31,6 +31,7 @@ docs/labs_html/
 presentation/out/
 presentation/temp/
 presentation/*.ps1
+presentation/*.py
 presentation/content.json
 presentation/decor/
 presentation/img/
