@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate 6 crisp 1280x720 @ 24fps "Liquid & Morphing Motion" 2D Vector MP4s
-in videos/github/ explaining each file in .github/ (referencing exercises/solutions/.github/).
+in videos/github/ explaining each file in .github/ (referencing docs/solutions/.github/).
 Rendered at 2x Supersampling (2560x1440) and downscaled via LANCZOS to 1280x720
 for razor-sharp anti-aliased Bezier curves, organic morphing blobs, and liquid droplets.
 """

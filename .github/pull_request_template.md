@@ -1,5 +1,5 @@
 ## สรุปการเปลี่ยนแปลง (Summary)
-<!-- อธิบายสั้นๆ ว่า PR นี้ทำอะไร และทำไมต้องทำ -->
+<!-- อธิบายสั้นๆ ว่า PR นี้ทำอะไร และทำไมต้องทำ (เช่น Closes #1) -->
 
 ## ประเภทของ PR (Type of Change)
 - [ ] `feat`: เพิ่มฟีเจอร์ใหม่ (`feature/*` → Rebase เข้า `main`)
@@ -8,7 +8,7 @@
 - [ ] `ci` / `docs` / `test`: ปรับปรุง CI, เอกสาร หรือ Unit Tests
 
 ## Checklist ก่อนขอ Review
-- [ ] รัน `pre-commit run --all-files` ผ่านแล้ว
-- [ ] รัน `pio test -e native` ผ่านทุกเคส
-- [ ] รัน `pio run -e esp32doit-devkit-v1` คอมไพล์ผ่านไม่มี Error
+- [ ] รัน `uv run pre-commit run --all-files` ผ่านแล้ว
+- [ ] รัน `uv run pio test -e native -v` ผ่านทุกเคส
+- [ ] รัน `uv run pio run -e esp32doit-devkit-v1` คอมไพล์ผ่านไม่มี Error
 - [ ] อัปเดตเอกสารหรือ Unit Test ที่เกี่ยวข้องแล้ว

@@ -298,6 +298,10 @@ class Checker:
             self.record("WARN", "Run pio test -e native", "ไม่พบคำสั่ง pio ในเครื่อง")
             return
         if not shutil.which("gcc") and not shutil.which("g++"):
+            msys_bin = Path(r"C:\msys64\ucrt64\bin")
+            if (msys_bin / "g++.exe").exists():
+                os.environ["PATH"] = f"{msys_bin};{os.environ.get('PATH', '')}"
+        if not shutil.which("gcc") and not shutil.which("g++"):
             self.record("WARN", "Run pio test -e native", 'ไม่พบ gcc/g++ ใน PATH (รัน $env:Path = "C:\\msys64\\ucrt64\\bin;$env:Path" ก่อนทดสอบ)')
             return
 
