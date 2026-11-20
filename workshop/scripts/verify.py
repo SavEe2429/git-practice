@@ -298,7 +298,7 @@ class Checker:
             self.record("WARN", "Run pio test -e native", "ไม่พบคำสั่ง pio ในเครื่อง")
             return
         if not shutil.which("gcc") and not shutil.which("g++"):
-            self.record("WARN", "Run pio test -e native", "ไม่พบ gcc/g++ ใน PATH (บน Windows ต้องติดตั้ง MinGW/WinLibs เพื่อรัน native test)")
+            self.record("WARN", "Run pio test -e native", 'ไม่พบ gcc/g++ ใน PATH (รัน $env:Path = "C:\\msys64\\ucrt64\\bin;$env:Path" ก่อนทดสอบ)')
             return
 
         code, out, err = run_cmd([pio, "test", "-e", "native"], self.project_dir)
